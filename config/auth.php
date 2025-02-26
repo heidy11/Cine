@@ -13,10 +13,10 @@ return [
     |
     */
 
-    'defaults' => [
-        'guard' => env('AUTH_GUARD', 'web'),
-        'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
-    ],
+   'defaults' => [
+    'guard' => 'web',
+    'passwords' => 'users',
+],
 
     /*
     |--------------------------------------------------------------------------
@@ -59,11 +59,11 @@ return [
     |
     */
 
-    'providers' => [
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
-        ],
+   'providers' => [
+    'users' => [
+        'driver' => 'eloquent',
+        'model'=> App\Models\Usuario::class, // Asegúrate de que sea el modelo correcto
+    ],
 
         // 'users' => [
         //     'driver' => 'database',
@@ -91,7 +91,7 @@ return [
     */
 
     'passwords' => [
-        'users' => [
+        'usuarios' => [
             'provider' => 'users',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
             'expire' => 60,
