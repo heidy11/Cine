@@ -36,4 +36,9 @@ class Reserva extends Model
     {
         return $this->hasOne(Pago::class, 'reserva_id');
     }
+    public function funcion()
+{
+    return $this->belongsTo(Funcion::class, 'funcion_id'); // Asegúrate de que 'funcion_id' es el nombre correcto
+}
+
 }

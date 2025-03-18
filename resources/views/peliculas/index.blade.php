@@ -21,7 +21,9 @@
                         <th class="py-3 px-6 text-left">Título</th>
                         <th class="py-3 px-6 text-left">Género</th>
                         <th class="py-3 px-6 text-left">Duración</th>
+                        <th class="py-3 px-6 text-center">Descripción</th>
                         <th class="py-3 px-6 text-center">Acciones</th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -30,6 +32,7 @@
                             <td class="py-4 px-6">{{ $pelicula->titulo }}</td>
                             <td class="py-4 px-6">{{ $pelicula->genero }}</td>
                             <td class="py-4 px-6">{{ $pelicula->duracion }} min</td>
+                            <td class="py-4 px-6">{{ $pelicula->descripcion }}</td>           
                             <td class="py-4 px-6 flex justify-center space-x-3">
                                 <a href="{{ route('peliculas.edit', $pelicula) }}" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded-lg shadow-md transition-all">
                                     ✏️ Editar

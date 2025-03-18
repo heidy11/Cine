@@ -21,6 +21,7 @@
                         <th class="py-3 px-6 text-left text-black">Película</th>
                         <th class="py-3 px-6 text-left text-black">Sala</th>
                         <th class="py-3 px-6 text-left text-black">Hora de Inicio</th>
+                        <th class="py-3 px-6 text-left text-black">Formato</th>
                         <th class="py-3 px-6 text-center text-black">Acciones</th>
                     </tr>
                 </thead>
@@ -30,11 +31,12 @@
                             <td class="py-4 px-6 text-black">{{ $funcion->pelicula->titulo }}</td>
                             <td class="py-4 px-6 text-black">{{ $funcion->sala->nombre }}</td>
                             <td class="py-4 px-6 text-black">{{ $funcion->hora_inicio }}</td>
+                            <td class="py-4 px-6 text-black">{{ $funcion->formato }}</td>
                             <td class="py-4 px-6 flex justify-center space-x-3">
-                                <a href="{{ route('funciones.edit', $funcion) }}" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded-lg shadow-md transition-all">
+                            <a href="{{ route('funciones.edit', ['funcion' => $funcion->id_funcion]) }}" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded-lg shadow-md transition-all">
                                     ✏️ Editar
                                 </a>
-                                <form action="{{ route('funciones.destroy', $funcion) }}" method="POST" class="inline">
+                                <form action="{{ route('funciones.destroy', $funcion->id_funcion) }}" method="POST" class="inline">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="bg-red-600 hover:bg-red-700 text-black font-semibold px-4 py-2 rounded-lg shadow-md transition-all">
                                         ❌ Eliminar

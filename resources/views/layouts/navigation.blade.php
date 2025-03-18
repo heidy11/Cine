@@ -8,7 +8,7 @@
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
                     </a>
                 </div>
-<!--CRUD-->
+<!-- CRUD -->
 @if(session('usuario_rol') == 1) <!-- 👈 Solo si el usuario es Administrador (rol_id = 1) -->
     <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
         <x-nav-link :href="route('salas.index')" :active="request()->routeIs('salas.index')">
@@ -22,7 +22,7 @@
         </x-nav-link>
     </div>
 @endif
-<!--CRUD-->
+<!-- CRUD -->
 <div class="hidden sm:flex sm:items-center sm:ms-6">
     <a href="{{ route('cartelera') }}" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-2 px-4 rounded-lg shadow-md">
         🎬 Ver Cartelera

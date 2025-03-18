@@ -29,6 +29,14 @@
                 <label class="block text-black font-semibold">Hora de Inicio:</label>
                 <input type="datetime-local" name="hora_inicio" id="hora_inicio" class="border border-gray-300 rounded-lg px-4 py-2 w-full text-black" required>
             </div>
+            <div>
+                <label class="block text-black font-semibold">Formato:</label>
+                <select name="formato" class="border border-gray-300 rounded-lg px-4 py-2 w-full text-black">
+                <option value="" disabled selected>Seleccione una sala</option>    
+                <option value="2D">🎞️ 2D</option>
+                <option value="3D">🎥 3D</option>
+                </select>
+            </div>
 
             <div class="flex justify-between">
                 <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-black font-semibold py-2 px-6 rounded-lg shadow-md">

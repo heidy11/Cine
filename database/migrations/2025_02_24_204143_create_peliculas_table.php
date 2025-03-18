@@ -17,15 +17,20 @@ return new class extends Migration
             $table->text('descripcion')->nullable();
             $table->integer('duracion');
             $table->string('genero');
+            $table-> string('imagen')->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('peliculas');
-    }
+    
+
+    public function down()
+{
+    Schema::table('peliculas', function (Blueprint $table) {
+        if (Schema::hasColumn('peliculas', 'imagen')) {
+            $table->dropColumn('imagen'); // ✅ Solo eliminará la columna si existe
+        }
+    });
+}
+
 };

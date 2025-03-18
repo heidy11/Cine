@@ -11,12 +11,18 @@ class Funcion extends Model
 
     protected $table = 'funciones';
     protected $primaryKey = 'id_funcion';
+    public $timestamps = true;
     protected $fillable = [
+    
         'pelicula_id',
         'sala_id',
         'hora_inicio',
+        'formato'
     ];
-
+    public function getRouteKeyName()
+    {
+        return 'id_funcion';
+    }
     // Una función pertenece a una película
     public function pelicula()
     {
@@ -33,5 +39,9 @@ class Funcion extends Model
     public function butacas()
     {
         return $this->hasMany(Butaca::class, 'funcion_id');
+    }
+    public function reservas ()
+    {
+        return $this->hasMany(Reserva::class, 'funcion_id');
     }
 }

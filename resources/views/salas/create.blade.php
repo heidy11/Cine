@@ -15,7 +15,7 @@
             </div>
 
             <div class="flex space-x-4">
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-md">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded shadow-md">
                     ✅ Guardar
                 </button>
                 <a href="{{ route('salas.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded shadow-md">

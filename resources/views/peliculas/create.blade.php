@@ -2,7 +2,7 @@
     <div class="container mx-auto p-6 bg-white rounded-lg shadow-lg max-w-lg">
         <h1 class="text-3xl font-extrabold mb-6 text-gray-900 text-center">🎥 Agregar Nueva Película</h1>
 
-        <form action="{{ route('peliculas.store') }}" method="POST" class="space-y-4">
+        <form action="{{ route('peliculas.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
             @csrf
             <div>
                 <label class="block text-gray-800 font-semibold">Título:</label>
@@ -22,6 +22,10 @@
             <div>
                 <label class="block text-gray-800 font-semibold">Descripción:</label>
                 <textarea name="descripcion" class="border border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-600" required></textarea>
+            </div>
+            <div>
+            <label class="block text-gray-800 font-semibold">Imagen de la Película:</label>
+            <input type="file" name="imagen" accept="image/*" class="border border-gray-300 rounded-lg px-4 py-2 w-full">
             </div>
 
             <div class="flex justify-between">

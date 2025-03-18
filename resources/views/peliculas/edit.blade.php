@@ -2,7 +2,7 @@
     <div class="container mx-auto p-6 bg-white rounded-lg shadow-lg max-w-lg">
         <h1 class="text-3xl font-extrabold mb-6 text-gray-900 text-center">✏️ Editar Película</h1>
 
-        <form action="{{ route('peliculas.update', $pelicula) }}" method="POST" class="space-y-4">
+        <form action="{{ route('peliculas.update', $pelicula-> id_pelicula) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
             @csrf @method('PUT')
 
             <div>
@@ -10,6 +10,15 @@
                 <input type="text" name="titulo" value="{{ $pelicula->titulo }}" class="border border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-yellow-500 focus:border-yellow-600" required>
             </div>
 
+            <div>
+            <label class="block text-gray-800 font-semibold">Imagen actual:</label>
+            <img src="{{ asset('storage/' . $pelicula->imagen) }}" class="w-48 h-60 object-cover rounded-lg mb-4">
+            </div>
+
+            <div>
+            <label class="block text-gray-800 font-semibold">Subir nueva imagen:</label>
+            <input type="file" name="imagen" accept="image/*" class="border border-gray-300 rounded-lg px-4 py-2 w-full">
+            </div>
             <div>
                 <label class="block text-gray-800 font-semibold">Género:</label>
                 <input type="text" name="genero" value="{{ $pelicula->genero }}" class="border border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-yellow-500 focus:border-yellow-600" required>

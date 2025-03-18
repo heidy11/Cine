@@ -39,12 +39,22 @@ class AuthenticatedSessionController extends Controller
     // Iniciar sesión manualmente
     Auth::loginUsingId($usuario->id_usuario);
 
+    // Guardar información adicional del usuario en la sesión
+    $request->session()->put('usuario_id', $usuario->id_usuario);
+    $request->session()->put('usuario_nombre', $usuario->nombre);
+    $request->session()->put('usuario_rol', $usuario->rol_id); // Guardar el rol
+
     // Regenerar la sesión
     $request->session()->regenerate();
 
-    // Redirigir a la página de dashboard
-    return redirect()->intended('dashboard');
+    //direccion segun usuarios
+    if($usuario->rol_id == 1){
+        return redirect('/dashboard');
+    }else{
+        return redirect('/cartelera');
+    }
 }
+
 
     // Manejar el logout
     public function destroy(Request $request)

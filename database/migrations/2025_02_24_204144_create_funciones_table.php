@@ -12,11 +12,14 @@ return new class extends Migration
     public function up()
 {
     Schema::create('funciones', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('pelicula_id')->constrained('peliculas')->onDelete('cascade');
-        $table->foreignId('sala_id')->constrained('salas')->onDelete('cascade');
-        $table->dateTime('hora_inicio');
+        $table->id('id_funcion');
+        $table->unsignedBigInteger('pelicula_id');
+        $table->unsignedBigInteger('sala_id');
+        $table->string('formato'); 
         $table->timestamps();
+
+        $table->foreign('pelicula_id')->references('id_pelicula')->on('peliculas')->onDelete('cascade');
+        $table->foreign('sala_id')->references('id_sala')->on('salas')->onDelete('cascade');
     });
 }
 
@@ -24,8 +27,13 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down(): void
-    {
-        Schema::dropIfExists('funcions');
-    }
+    public function down()
+{
+    Schema::table('funciones', function (Blueprint $table) {
+        if (Schema::hasColumn('funciones', 'formato')) {
+            $table->dropColumn('formato'); // ✅ Ahora solo la elimina si existe
+        }
+    });
+}
+
 };

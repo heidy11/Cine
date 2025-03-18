@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Usuario;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,41 +16,30 @@ use Illuminate\Support\Facades\DB;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
-    public function create(): View
+    public function create()
     {
-        return view('auth.register');
+        return view('auth.register'); // ✅ Evita el error y muestra la vista
     }
-
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function store(Request $request)
-{
-    $request->validate([
-        'nombre' => 'required|string|max:255',
-        'correo' => 'required|string|email|max:255|unique:usuarios',
-        'contrasena' => 'required|string|min:8|confirmed',
-    ]);
+    {
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'correo' => 'required|string|email|max:255|unique:usuarios,correo',
+            'contrasena' => 'required|string|min:8|confirmed',
+        ]);
 
-    $rolPredeterminado = 2; // 👈 Aquí defines el rol por defecto (ejemplo: usuario común)
+        $usuario = Usuario::create([
+            'nombre' => $request->nombre,
+            'correo' => $request->correo,
+            'contrasena' => Hash::make($request->contrasena),
+            'rol_id' => 2, // Cliente por defecto
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
-    $insertado = DB::table('usuarios')->insert([
-        'nombre' => $request->nombre,
-        'correo' => $request->correo,
-        'contrasena' => Hash::make($request->contrasena),
-        'rol_id' => $rolPredeterminado, // 👈 Agregamos el rol predeterminado
-    ]);
+        event(new Registered($usuario));
 
-    if ($insertado) {
-        return redirect()->route('dashboard')->with('success', 'Usuario registrado correctamente');
-    } else {
-        return back()->with('error', 'Hubo un problema al registrar el usuario');
+        return redirect()->route('dashboard')->with('success', 'Usuario registrado correctamente.');
     }
 }
 
-}

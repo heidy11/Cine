@@ -11,7 +11,8 @@ class Usuario extends Authenticatable
 
     // Especifica explícitamente el nombre de la tabla
     protected $table = 'usuarios'; // Asegúrate de que este nombre coincida con tu tabla en la base de datos
-    protected $primaryKey = 'id_usuario'; // Especifica el nombre de la clave primaria si no es `id`
+    protected $primaryKey = 'id_usuario';
+    public $timestamps = true; // Especifica el nombre de la clave primaria si no es `id`
     protected $fillable = [
         'nombre',
         'correo',
