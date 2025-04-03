@@ -18,7 +18,7 @@
             <table class="w-full bg-white shadow-md rounded-lg overflow-hidden">
                 <thead class="bg-blue-500 text-black uppercase text-sm">
                     <tr>
-                        <th class="py-3 px-6 text-left">Título</th>
+                        <th class="py-3 px-6 text-left text-black">Título</th>
                         <th class="py-3 px-6 text-left">Género</th>
                         <th class="py-3 px-6 text-left">Duración</th>
                         <th class="py-3 px-6 text-center">Descripción</th>

@@ -30,9 +30,9 @@
             </div>
 
             <div class="mt-4">
-                <a href="{{ route('reservar.form', $funcion->id_funcion) }}" class="bg-blue-600 hover:bg-blue-700 text-black font-semibold py-2 px-4 rounded-lg shadow-md w-full block text-center">
-                    🎟️ Reservar
-                </a>
+            <a href="{{ route('butacas.show', $funcion->id_funcion) }}" class="bg-blue-600 hover:bg-blue-700 text-black font-semibold py-2 px-4 rounded-lg shadow-md w-full block text-center">
+            🎟️ Reservar
+            </a>
             </div>
         </div>
     </div>

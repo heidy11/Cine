@@ -40,8 +40,16 @@
 
             <div>
                 <label class="block text-black font-semibold">Hora de Inicio:</label>
-                <input type="datetime-local" name="hora_inicio" value="{{ \Carbon\Carbon::parse($funcion->hora_inicio)->format('Y-m-d\TH:i') }}" 
+                <input type="datetime-local" name="hora_inicio" 
+                value="{{ \Carbon\Carbon::parse($funcion->hora_inicio)->format('Y-m-d\TH:i') }}" 
                 class="border border-gray-300 rounded-lg px-4 py-2 w-full text-black" required>
+            </div>
+
+            <div>
+                <label class="block text-black font-semibold">Hora de Fin:</label>
+                <input type="datetime-local" name="hora_fin" 
+                    value="{{ \Carbon\Carbon::parse($funcion->hora_fin)->format('Y-m-d\TH:i') }}" 
+                    class="border border-gray-300 rounded-lg px-4 py-2 w-full text-black" required>
             </div>
 
             <div>

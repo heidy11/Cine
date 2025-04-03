@@ -14,7 +14,9 @@ class FuncionController extends Controller
 {
     public function index()
     {
-        $funciones = Funcion::with(['pelicula', 'sala'])->get();
+        $funciones = Funcion::with(['pelicula', 'sala'])
+        ->orderBy('id_funcion', 'asc')
+        ->get();
         return view('funciones.index', compact('funciones'));
     }
 
@@ -29,23 +31,32 @@ class FuncionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'pelicula_id' => 'required|integer|exists:peliculas,id_pelicula',
-            'sala_id' => 'required|integer|exists:salas,id_sala',
+            'pelicula_id' => 'required|exists:peliculas,id_pelicula',
+            'sala_id' => 'required|exists:salas,id_sala',
             'hora_inicio' => 'required|date_format:Y-m-d\TH:i',
+            
             'formato' => 'required|in:2D,3D',
         ]);
-
+    
         $hora_inicio = Carbon::parse($request->hora_inicio)->setTimezone('America/La_Paz');
-
-        Funcion::create([
-            'pelicula_id' => (int) $request->pelicula_id,
-            'sala_id' => (int) $request->sala_id,
+        
+        // Obtener duración de la película
+        $pelicula = Pelicula::findOrFail($request->pelicula_id);
+        $hora_fin = $hora_inicio->copy()->addMinutes($pelicula->duracion); // ⏳ Calcula hora_fin automáticamente
+    
+        $funcion = Funcion::create([
+            'pelicula_id' => $request->pelicula_id,
+            'sala_id' => $request->sala_id,
             'hora_inicio' => $hora_inicio,
+            'hora_fin' => $hora_fin,
             'formato' => $request->formato,
         ]);
-
-        return redirect()->route('funciones.index')->with('success', 'Función creada con éxito');
+    
+        Log::info('✅ Función creada:', ['id_funcion' => $funcion->id_funcion, 'hora_fin' => $funcion->hora_fin]);
+    
+        return redirect()->route('funciones.index')->with('success', 'Función creada con éxito.');
     }
+   
 
     public function cartelera()
     {
@@ -75,12 +86,14 @@ class FuncionController extends Controller
             'pelicula_id' => 'required|exists:peliculas,id_pelicula',
             'sala_id' => 'required|exists:salas,id_sala',
             'hora_inicio' => 'required|date',
+            'hora_fin' => 'required|date',
             'formato' => 'required|in:2D,3D',
         ]);
     
         $funcion->pelicula_id = $request->pelicula_id;
         $funcion->sala_id = $request->sala_id;
         $funcion->hora_inicio = Carbon::parse($request->hora_inicio)->setTimezone('America/La_Paz');
+        $funcion->hora_fin = Carbon::parse($request->hora_fin)->setTimezone('America/La_Paz');
         $funcion->formato = $request->formato;
     
         // Verificar si los datos realmente cambiaron

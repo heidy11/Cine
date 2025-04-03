@@ -30,6 +30,10 @@
                 <input type="datetime-local" name="hora_inicio" id="hora_inicio" class="border border-gray-300 rounded-lg px-4 py-2 w-full text-black" required>
             </div>
             <div>
+                <label class="block text-black font-semibold">Hora fin:</label>
+                <input type="datetime-local" name="hora_fin" id="hora_fin" class="border border-gray-300 rounded-lg px-4 py-2 w-full text-black" required>
+            </div>
+            <div>
                 <label class="block text-black font-semibold">Formato:</label>
                 <select name="formato" class="border border-gray-300 rounded-lg px-4 py-2 w-full text-black">
                 <option value="" disabled selected>Seleccione una sala</option>    

@@ -51,6 +51,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reservar/{funcion}', [ReservaController::class, 'create'])->name('reservar.form');
     Route::post('/reservar', [ReservaController::class, 'store'])->name('reservar');
     Route::get('/mis-reservas', [ReservaController::class, 'index'])->name('reservas.index');
+
+    Route::get('/reservar/{funcion}', [ButacaController::class, 'show'])->name('butacas.show');  
+    Route::post('/reservar/{funcion}', [ReservaController::class, 'store'])->name('reservar.store');  
+
+    Route::get('/butacas/{funcion}', [ButacaController::class, 'show'])->name('butacas.show');
+
 });
 
 // ** Cartelera de funciones (pública) **

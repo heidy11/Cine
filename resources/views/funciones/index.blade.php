@@ -21,6 +21,7 @@
                         <th class="py-3 px-6 text-left text-black">Película</th>
                         <th class="py-3 px-6 text-left text-black">Sala</th>
                         <th class="py-3 px-6 text-left text-black">Hora de Inicio</th>
+                        <th class="py-3 px-6 text-left text-black">Hora de Fin</th>
                         <th class="py-3 px-6 text-left text-black">Formato</th>
                         <th class="py-3 px-6 text-center text-black">Acciones</th>
                     </tr>
@@ -31,6 +32,7 @@
                             <td class="py-4 px-6 text-black">{{ $funcion->pelicula->titulo }}</td>
                             <td class="py-4 px-6 text-black">{{ $funcion->sala->nombre }}</td>
                             <td class="py-4 px-6 text-black">{{ $funcion->hora_inicio }}</td>
+                            <td class="py-4 px-6 text-black">{{ $funcion->hora_fin }}</td>
                             <td class="py-4 px-6 text-black">{{ $funcion->formato }}</td>
                             <td class="py-4 px-6 flex justify-center space-x-3">
                             <a href="{{ route('funciones.edit', ['funcion' => $funcion->id_funcion]) }}" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded-lg shadow-md transition-all">

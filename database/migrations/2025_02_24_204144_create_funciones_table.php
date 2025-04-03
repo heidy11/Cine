@@ -15,6 +15,8 @@ return new class extends Migration
         $table->id('id_funcion');
         $table->unsignedBigInteger('pelicula_id');
         $table->unsignedBigInteger('sala_id');
+        $table->dateTime('hora_inicio');
+        $table->dateTime('hora_fin');
         $table->string('formato'); 
         $table->timestamps();
 

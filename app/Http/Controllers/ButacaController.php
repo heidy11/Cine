@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Butaca;
+use App\Models\Funcion;
+use App\Models\Reserva;
 use Illuminate\Http\Request;
 
 class ButacaController extends Controller
@@ -33,10 +35,40 @@ class ButacaController extends Controller
                          ->with('success', 'Butaca creada correctamente.');
     }
 
-    public function show(Butaca $butaca)
-    {
-        return view('butacas.show', compact('butaca'));
+
+
+
+    /**
+     * Mostrar las butacas para una función específica.
+     */
+    public function show($funcion_id)
+{
+    $filas = 15; // Total de filas del lado izquierdo
+    $butacas_izquierda = [];
+
+    // Numeración impar descendente por fila
+    $numeros_impares = [23, 21, 19, 17, 15, 13, 11, 9, 7, 5, 3, 1];
+
+    for ($fila = 1; $fila <= $filas; $fila++) {
+        $fila_butacas = [];
+
+        foreach ($numeros_impares as $numero) {
+            $asiento = [
+                'fila' => $fila,
+                'numero' => $numero,
+                'nombre' => "F{$fila}-{$numero}" // Ej: F1-23
+            ];
+            $fila_butacas[] = $asiento;
+        }
+
+        $butacas_izquierda[] = $fila_butacas;
     }
+
+    return view('reservas.reservar', compact('butacas_izquierda', 'funcion_id'));
+}
+
+
+
 
     public function edit(Butaca $butaca)
     {

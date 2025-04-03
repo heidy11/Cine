@@ -1,3 +1,25 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Estilos personalizados */
+body {
+    @apply bg-[#38045a] text-yellow-400; /* Morado de fondo, dorado en texto */
+    font-family: 'Instrument Sans', sans-serif;
+}
+
+.btn-principal {
+    @apply bg-yellow-400 text-[#38045D] font-semibold py-2 px-4 rounded-full transition duration-300 hover:bg-[#38045D] hover:text-yellow-400 border-2 border-yellow-400;
+}
+
+.input-principal {
+    @apply bg-white text-[#38045D] border border-yellow-400 rounded-md shadow-sm focus:ring-yellow-400 focus:border-yellow-400;
+}
+
+.label-principal {
+    @apply text-yellow-400 font-medium;
+}
+.input-estilo-monje {
+    @apply bg-white text-black font-semibold border border-yellow-400 focus:border-yellow-500 focus:ring-yellow-500 rounded-md shadow-sm w-full mt-1;
+}
+

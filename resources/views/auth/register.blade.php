@@ -1,5 +1,10 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
+    <div class="flex flex-col items-center text-center mb-6">
+        
+        <h1 class="text-2xl font-semibold text-[#FFD700]">Crear cuenta</h1>
+    </div>
+
+    <form method="POST" action="{{ route('register') }}" class="space-y-4 text-left">
         @csrf
 
         <!-- Nombre -->
@@ -10,41 +15,32 @@
         </div>
 
         <!-- Correo Electrónico -->
-        <div class="mt-4">
+        <div>
             <x-input-label for="correo" :value="__('Correo')" />
             <x-text-input id="correo" class="block mt-1 w-full" type="email" name="correo" :value="old('correo')" required autocomplete="username" />
             <x-input-error :messages="$errors->get('correo')" class="mt-2" />
         </div>
 
         <!-- Contraseña -->
-        <div class="mt-4">
+        <div>
             <x-input-label for="contrasena" :value="__('Contraseña')" />
-
-            <x-text-input id="contrasena" class="block mt-1 w-full"
-                            type="password"
-                            name="contrasena"
-                            required autocomplete="new-password" />
-
+            <x-text-input id="contrasena" class="block mt-1 w-full" type="password" name="contrasena" required autocomplete="new-password" />
             <x-input-error :messages="$errors->get('contrasena')" class="mt-2" />
         </div>
 
         <!-- Confirmar Contraseña -->
-        <div class="mt-4">
+        <div>
             <x-input-label for="contrasena_confirmation" :value="__('Confirmar Contraseña')" />
-
-            <x-text-input id="contrasena_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="contrasena_confirmation" required autocomplete="new-password" />
-
+            <x-text-input id="contrasena_confirmation" class="block mt-1 w-full" type="password" name="contrasena_confirmation" required autocomplete="new-password" />
             <x-input-error :messages="$errors->get('contrasena_confirmation')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
-                {{ __('¿Ya tienes una cuenta? Inicia sesión') }}
+        <!-- Botones -->
+        <div class="flex items-center justify-between mt-4">
+            <a class="underline text-sm text-gray-200 hover:text-white" href="{{ route('login') }}">
+                ¿Ya tienes una cuenta?
             </a>
-
-            <x-primary-button class="ms-4">
+            <x-primary-button class="bg-[#FFD700] text-[#220044] hover:bg-yellow-400 font-semibold">
                 {{ __('Registrarse') }}
             </x-primary-button>
         </div>
