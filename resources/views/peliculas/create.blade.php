@@ -10,9 +10,21 @@
             </div>
 
             <div>
-                <label class="block text-gray-800 font-semibold">Género:</label>
-                <input type="text" name="genero" class="border border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-600" required>
-            </div>
+    <label class="block text-gray-800 font-semibold">Género:</label>
+    <select name="genero" class="border border-gray-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-600" required>
+        <option value="">-- Selecciona un género --</option>
+        <option value="Acción">Acción</option>
+        <option value="Comedia">Comedia</option>
+        <option value="Drama">Drama</option>
+        <option value="Terror">Terror</option>
+        <option value="Animación">Animación</option>
+        <option value="Fantasía">Fantasía</option>
+        <option value="Ciencia ficción">Ciencia ficción</option>
+        <option value="Romance">Romance</option>
+        <option value="Documental">Documental</option>
+    </select>
+</div>
+
 
             <div>
                 <label class="block text-gray-800 font-semibold">Duración (min):</label>

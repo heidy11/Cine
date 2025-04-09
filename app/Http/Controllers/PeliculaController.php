@@ -27,6 +27,7 @@ class PeliculaController extends Controller
             'genero' => 'required',
             'descripcion'=>'required|string',
             'imagen'=>'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            
         ]);
         $imagenPath = null;
 

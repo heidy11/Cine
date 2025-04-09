@@ -26,14 +26,27 @@
             </div>
 
             <div>
-                <label class="block text-black font-semibold">Hora de Inicio:</label>
-                <input type="datetime-local" name="hora_inicio" id="hora_inicio" class="border border-gray-300 rounded-lg px-4 py-2 w-full text-black" required>
-            </div>
-            <div>
-                <label class="block text-black font-semibold">Hora fin:</label>
-                <input type="datetime-local" name="hora_fin" id="hora_fin" class="border border-gray-300 rounded-lg px-4 py-2 w-full text-black" required>
-            </div>
-            <div>
+    <label class="block text-gray-800 font-semibold">Fecha y Hora de Inicio:</label>
+    <input type="datetime-local" name="hora_inicio"
+        min="{{ \Carbon\Carbon::now()->format('Y-m-d\TH:i') }}"
+        class="border border-gray-300 rounded-lg px-4 py-2 w-full text-black"
+        required>
+    @error('hora_inicio')
+        <span class="text-red-500 text-sm">{{ $message }}</span>
+    @enderror
+</div>
+
+
+<div>
+    <label class="block text-gray-800 font-semibold">Fecha y Hora de Fin:</label>
+    <input type="datetime-local" name="hora_fin"
+        min="{{ \Carbon\Carbon::now()->format('Y-m-d\TH:i') }}"
+        class="border border-gray-300 rounded-lg px-4 py-2 w-full text-black"
+        required>
+    @error('hora_fin')
+        <span class="text-red-500 text-sm">{{ $message }}</span>
+    @enderror
+
                 <label class="block text-black font-semibold">Formato:</label>
                 <select name="formato" class="border border-gray-300 rounded-lg px-4 py-2 w-full text-black">
                 <option value="" disabled selected>Seleccione una sala</option>    

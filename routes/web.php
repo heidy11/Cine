@@ -58,6 +58,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/butacas/{funcion}', [ButacaController::class, 'show'])->name('butacas.show');
 
 });
+Route::get('/api/horas-disponibles', [App\Http\Controllers\FuncionController::class, 'horasDisponibles']);
 
 // ** Cartelera de funciones (pública) **
 Route::get('/cartelera', [FuncionController::class, 'cartelera'])->name('cartelera');

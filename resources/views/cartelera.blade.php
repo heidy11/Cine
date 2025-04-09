@@ -1,41 +1,49 @@
 <x-app-layout>
-    <div class="container mx-auto p-6 bg-white rounded-lg shadow-lg">
-        <h1 class="text-3xl font-extrabold mb-6 text-black text-center">🎬 Cartelera de Cine</h1>
-        @if(Auth::check())
-    <p class="text-green-500">✅ Usuario autenticado: {{ Auth::user()->nombre ?? Auth::user()->email }}</p>
-@else
-    <p class="text-red-500">❌ No hay usuario autenticado</p>
-@endif
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-extrabold text-center text-yellow-400 mb-10">🎬 Cartelera de Cine</h1>
 
+        @auth
+            <p class="text-center text-gray mb-6">Bienvenido, <span class="font-semibold">{{ Auth::user()->nombre }}</span></p>
+        @else
+            <p class="text-center text-red-400 mb-6">No hay usuario autenticado</p>
+        @endauth
 
         @if($funciones->isEmpty())
-            <p class="text-center text-gray-500">No hay funciones disponibles en este momento.</p>
+            <p class="text-center text-white">Actualmente no hay funciones disponibles.</p>
         @else
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        @foreach($funciones as $funcion)
-        <div class="border border-gray-300 rounded-lg shadow-lg p-4 bg-white">
-            @if($funcion->pelicula->imagen)
-                <img src="{{ asset('storage/' . $funcion->pelicula->imagen) }}" class="w-48 h-60 object-cover rounded-lg mb-4">
-            @else
-                <img src="{{ asset('images/default-movie.jpg') }}" class="w-48 h-72 object-cover rounded-lg mb-4 mx-auto">
-            @endif
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8">
+                @foreach($funciones as $funcion)
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300">
+                        <!-- Imagen -->
+                        <div class="aspect-[2/3] overflow-hidden">
+                            @if($funcion->pelicula->imagen)
+                                <img src="{{ asset('storage/' . $funcion->pelicula->imagen) }}"
+                                     alt="{{ $funcion->pelicula->titulo }}"
+                                     class="w-full h-full object-cover object-center transition-transform duration-300 hover:scale-105">
+                            @else
+                                <img src="{{ asset('images/default-movie.jpg') }}"
+                                     alt="Imagen no disponible"
+                                     class="w-full h-full object-cover object-center">
+                            @endif
+                        </div>
 
-            <h2 class="text-xl font-bold text-black">{{ $funcion->pelicula->titulo }}</h2>
-            <p class="text-gray-600">🎭 Sala: <strong class="text-black">{{ $funcion->sala->nombre }}</strong></p>
-            <p class="text-gray-600">⏰ Hora: <strong class="text-black">{{ \Carbon\Carbon::parse($funcion->hora_inicio)->format('d/m/Y H:i') }}</strong></p>
-            <div class="absolute top-2 right-2 px-2 py-1 rounded 
-                {{ $funcion->formato == '3D' ? 'bg-red-500' : 'bg-blue-500' }} 
-                text-white text-xs font-bold">
-                {{ $funcion->formato }}
-            </div>
+                        <!-- Detalles -->
+                        <div class="p-4 text-gray-800">
+                            <h2 class="text-lg font-bold truncate mb-2 text-[#220044]">{{ $funcion->pelicula->titulo }}</h2>
+                            <p class="text-sm mb-1">🎭 <span class="font-medium">Sala:</span> {{ $funcion->sala->nombre }}</p>
+                            <p class="text-sm mb-1">⏰ <span class="font-medium">Hora:</span> {{ \Carbon\Carbon::parse($funcion->hora_inicio)->format('d/m/Y H:i') }}</p>
+                            <p class="text-sm mb-4">📽️ <span class="font-medium">Formato:</span>
+                                <span class="inline-block bg-yellow-400 text-[#220044] px-2 py-0.5 rounded-full text-xs font-semibold">
+                                    {{ $funcion->formato }}
+                                </span>
+                            </p>
 
-            <div class="mt-4">
-            <a href="{{ route('butacas.show', $funcion->id_funcion) }}" class="bg-blue-600 hover:bg-blue-700 text-black font-semibold py-2 px-4 rounded-lg shadow-md w-full block text-center">
-            🎟️ Reservar
-            </a>
-            </div>
-        </div>
-    </div>
+                            <!-- Botón -->
+                            <a href="{{ route('butacas.show', $funcion->id_funcion) }}"
+                               class="block text-center bg-[#220044] hover:bg-[#3a006e] text-yellow-400 font-semibold py-2 rounded-md transition duration-300">
+                                🎟️ Reservar
+                            </a>
+                        </div>
                     </div>
                 @endforeach
             </div>

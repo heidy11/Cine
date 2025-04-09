@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="container mx-auto p-6">
-        <h1 class="text-3xl font-bold mb-4 text-gray-800">Listado de Salas</h1>
+        <h1 class="text-3xl font-bold mb-4 text-white-800">Listado de Salas</h1>
 
         <a href="{{ route('salas.create') }}" class="bg-blue-600 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded shadow-md">
             ➕ Crear Sala

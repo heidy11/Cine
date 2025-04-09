@@ -17,6 +17,8 @@ class Funcion extends Model
         'pelicula_id',
         'sala_id',
         'hora_inicio',
+        'hora_fin',
+        
         'formato'
     ];
     public function getRouteKeyName()
