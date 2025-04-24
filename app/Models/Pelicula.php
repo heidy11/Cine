@@ -21,7 +21,7 @@ class Pelicula extends Model
     // Una película puede tener muchas funciones
     public function funciones()
     {
-        return $this->hasMany(Funcion::class, 'pelicula_id');
+        return $this->hasMany(Funcion::class, 'pelicula_id','id_pelicula');
     }
 }
 

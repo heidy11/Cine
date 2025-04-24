@@ -61,7 +61,7 @@
 
             {{-- Botón de confirmación --}}
             <div class="text-center mt-6">
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded">
+                <button type="submit" class="bg-yellow-400 hover:bg-yellow-500 text-[#220044] font-bold px-6 py-2 rounded">
                     ✅ Confirmar reserva
                 </button>
             </div>

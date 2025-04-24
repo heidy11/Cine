@@ -25,6 +25,7 @@ Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
 
 // ** Agrupamos Rutas Protegidas por Autenticación **
 Route::middleware(['auth'])->group(function () {
+    Route::post('/reservar', [ReservaController::class, 'store'])->name('reservar');
 
     // ** Rutas para Administradores **
    // Route::middleware(AdminMiddleware::class)->group(function () {

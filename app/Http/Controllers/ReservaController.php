@@ -4,30 +4,53 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Reserva;
+use App\Models\Butaca;
 use App\Models\Funcion;
 use Illuminate\Support\Facades\Auth;
 
 class ReservaController extends Controller
 {
-    public function store(Request $request, $funcion_id)
+    public function store(Request $request)
     {
-        $funcion = Funcion::findOrFail($funcion_id);
-
-        $butacasSeleccionadas = $request->input('butacas'); // Array de IDs de butacas seleccionadas
-
-        foreach ($butacasSeleccionadas as $butaca_id) {
-            Reserva::create([
-                'usuario_id' => Auth::id(),
-                'funcion_id' => $funcion->id_funcion,
-                'butaca_id' => $butaca_id,
-                'estado' => 'reservado',
-                'reservado_en' => now(),
-                'limite_pago' => now()->addMinutes(30),
-            ]);
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Debe iniciar sesión para hacer una reserva.');
         }
-
-        return redirect()->route('reservas.index')->with('success', '¡Reservas realizadas con éxito!');
+    
+        $request->validate([
+            'funcion_id' => 'required|exists:funciones,id_funcion',
+            'butacas'    => 'required|array',
+        ]);
+    
+        $usuario_id = Auth::id(); // ✅ Ya estará garantizado que hay usuario autenticado
+    
+        foreach ($request->input('butacas') as $nombreButaca) {
+            $butaca = Butaca::where('numero', $nombreButaca)
+                            ->where('funcion_id', $request->funcion_id)
+                            ->first();
+    
+            if ($butaca) {
+                Reserva::create([
+                    'usuario_id'   => $usuario_id,
+                    'butaca_id'    => $butaca->id,
+                    'estado'       => 'reservado',
+                    'reservado_en' => now(),
+                    'limite_pago'  => now()->addHours(2),
+                ]);
+            }
+        }
+    
+        return redirect()->route('reservas.index')->with('success', 'Reserva realizada correctamente.');
     }
+    
+
+
+// Esta función puede buscar el ID real de la butaca en base al nombre y la función
+private function obtenerIdButaca($nombre, $funcion_id)
+{
+    return \App\Models\Butaca::where('numero', $nombre)
+        ->where('funcion_id', $funcion_id)
+        ->value('id_butaca');
+}
 
 
     public function index()

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pelicula;
+use App\Models\Funcion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -56,7 +57,8 @@ class PeliculaController extends Controller
     {
         return view('peliculas.edit', compact('pelicula'));
     }
-
+    
+    
     public function update(Request $request, Pelicula $pelicula)
 {
     // Verifica que los datos llegan correctamente
