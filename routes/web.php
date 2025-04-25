@@ -60,7 +60,8 @@ Route::middleware(['auth'])->group(function () {
 
 });
 Route::get('/api/horas-disponibles', [App\Http\Controllers\FuncionController::class, 'horasDisponibles']);
-
+//HORARIOS
+Route::get('/peliculas/{pelicula}/horarios',[FuncionController::class, 'verHorarios'])->name('peliculas.horarios');
 // ** Cartelera de funciones (pública) **
 Route::get('/cartelera', [FuncionController::class, 'cartelera'])->name('cartelera');
 Route::get('/register', function () {

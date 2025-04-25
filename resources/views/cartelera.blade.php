@@ -27,30 +27,28 @@
                                 </div>
                             </div>
 
-                            <!-- Lado trasero -->
-                            
-                            <div class="card-back absolute w-full h-full bg-[#220044] text-white rounded-xl p-4 backface-hidden rotate-y-180 overflow-auto">
-                                <h2 class="text-lg font-bold text-yellow-400 mb-1">{{ $pelicula->titulo }}</h2>
+                            <<!-- Lado trasero -->
+<div class="card-back absolute w-full h-full bg-gradient-to-b from-[#220044] to-[#110022] text-white rounded-xl p-5 backface-hidden rotate-y-180 flex flex-col justify-center items-center text-center space-y-4">
 
-                                <p class="text-sm mb-1 text-gray-300 italic">🎞️ Género: {{ $pelicula->genero }}</p>
+{{-- Título grande y estilizado --}}
+<h2 class="text-3xl font-extrabold text-yellow-400 tracking-wide uppercase leading-tight">
+    {{ $pelicula->titulo }}
+</h2>
 
-                                <p class="text-sm mb-3">{{ Str::limit($pelicula->descripcion, 100, '...') }}</p>
+{{-- Descripción con buen espaciado y lectura --}}
+<p class="text-base text-gray-300 leading-relaxed max-h-[160px] overflow-y-auto px-2">
+    {{ Str::limit($pelicula->descripcion, 300, '...') }}
+</p>
 
-                                <p class="text-sm mb-2 font-semibold text-yellow-200">Selecciona un horario:</p>
+{{-- Botón más visible y centrado --}}
+<a href="{{ route('peliculas.horarios', $pelicula->id_pelicula) }}"
+   class="mt-2 inline-block bg-yellow-400 hover:bg-yellow-300 text-[#220044] font-semibold text-base px-6 py-2 rounded-full shadow-md transition-transform transform hover:scale-105">
+    🎟️ Ver horarios disponibles
+</a>
+</div>
 
-                                @php
-                                    $funcionesDisponibles = $pelicula->funciones->where('hora_inicio', '>=', now())->sortBy('hora_inicio');
-                                @endphp
 
-                                @forelse($funcionesDisponibles as $funcion)
-                                    <a href="{{ route('butacas.show', $funcion->id_funcion) }}"
-                                       class="block bg-yellow-400 text-[#220044] font-bold py-1 px-3 rounded-full text-sm mb-2 hover:bg-yellow-300 transition">
-                                        {{ \Carbon\Carbon::parse($funcion->hora_inicio)->format('d/m H:i') }} | {{ $funcion->formato }}
-                                    </a>
-                                @empty
-                                    <p class="text-sm text-red-300">No hay horarios disponibles</p>
-                                @endforelse
-                            </div>
+
 
                         </div>
                     </div>
