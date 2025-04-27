@@ -40,49 +40,46 @@ class FuncionController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'pelicula_id' => 'required|exists:peliculas,id_pelicula',
-            'sala_id'     => 'required|exists:salas,id_sala',
-            'hora_inicio' => 'required|date',
-            'hora_fin'    => 'required|date|after:hora_inicio',
-            'formato'     => 'required|in:2D,3D',
-        ]);
+{
+    $request->validate([
+        'pelicula_id' => 'required|exists:peliculas,id_pelicula',
+        'sala_id'     => 'required|exists:salas,id_sala',
+        'hora_inicio' => 'required|date',
+        'hora_fin'    => 'required|date|after:hora_inicio',
+        'formato'     => 'required|in:2D,3D',
+    ]);
 
-        $hora_inicio = Carbon::parse($request->hora_inicio)->setTimezone('America/La_Paz');
-        $hora_fin = Carbon::parse($request->hora_fin)->setTimezone('America/La_Paz');
-        $ahora = Carbon::now('America/La_Paz');
+    $hora_inicio = Carbon::parse($request->hora_inicio)->setTimezone('America/La_Paz');
+    $hora_fin    = Carbon::parse($request->hora_fin)->setTimezone('America/La_Paz');
+    $ahora       = Carbon::now('America/La_Paz');
 
-        if ($hora_inicio->lessThan($ahora)) {
-            return back()->withErrors(['hora_inicio' => 'La hora de inicio no puede ser en el pasado.'])->withInput();
-        }
-
-        // Evitar conflictos de horario en la misma sala
-        $conflicto = Funcion::where('sala_id', $request->sala_id)
-            ->where(function ($query) use ($hora_inicio, $hora_fin) {
-                $query->whereBetween('hora_inicio', [$hora_inicio, $hora_fin])
-                      ->orWhereBetween('hora_fin', [$hora_inicio, $hora_fin])
-                      ->orWhere(function ($query) use ($hora_inicio, $hora_fin) {
-                          $query->where('hora_inicio', '<=', $hora_inicio)
-                                ->where('hora_fin', '>=', $hora_fin);
-                      });
-            })
-            ->exists();
-
-        if ($conflicto) {
-            return back()->withErrors(['hora_inicio' => 'Ya existe otra función en esa sala con un horario que se cruza.'])->withInput();
-        }
-
-        $funcion = Funcion::create([
-            'pelicula_id' => $request->pelicula_id,
-            'sala_id'     => $request->sala_id,
-            'hora_inicio' => $hora_inicio,
-            'hora_fin'    => $hora_fin,
-            'formato'     => $request->formato,
-        ]);
-
-        return redirect()->route('funciones.index')->with('success', 'Función creada correctamente.');
+    if ($hora_inicio->lessThan($ahora)) {
+        return back()->withErrors(['hora_inicio' => 'La hora de inicio no puede ser en el pasado.'])->withInput();
     }
+
+    // ✅ Validación mejorada de conflictos
+    $conflicto = Funcion::where('sala_id', $request->sala_id)
+        ->where(function ($query) use ($hora_inicio, $hora_fin) {
+            $query->where('hora_inicio', '<', $hora_fin)
+                  ->where('hora_fin', '>', $hora_inicio);
+        })
+        ->exists();
+
+    if ($conflicto) {
+        return back()->withErrors(['hora_inicio' => 'Ya existe otra función en esa sala con un horario que se cruza.'])->withInput();
+    }
+
+    Funcion::create([
+        'pelicula_id' => $request->pelicula_id,
+        'sala_id'     => $request->sala_id,
+        'hora_inicio' => $hora_inicio,
+        'hora_fin'    => $hora_fin,
+        'formato'     => $request->formato,
+    ]);
+
+    return redirect()->route('funciones.index')->with('success', 'Función creada correctamente.');
+}
+
 
     public function edit(Funcion $funcion)
     {
@@ -114,16 +111,13 @@ class FuncionController extends Controller
         }
 
         $conflicto = Funcion::where('sala_id', $request->sala_id)
-            ->where('id_funcion', '!=', $funcion->id_funcion)
-            ->where(function ($query) use ($hora_inicio, $hora_fin) {
-                $query->whereBetween('hora_inicio', [$hora_inicio, $hora_fin])
-                      ->orWhereBetween('hora_fin', [$hora_inicio, $hora_fin])
-                      ->orWhere(function ($query) use ($hora_inicio, $hora_fin) {
-                          $query->where('hora_inicio', '<=', $hora_inicio)
-                                ->where('hora_fin', '>=', $hora_fin);
-                      });
-            })
-            ->exists();
+    ->where('id_funcion', '!=', $funcion->id_funcion)
+    ->where(function ($query) use ($hora_inicio, $hora_fin) {
+        $query->where('hora_inicio', '<', $hora_fin)
+              ->where('hora_fin', '>', $hora_inicio);
+    })
+    ->exists();
+
 
         if ($conflicto) {
             return back()->withErrors(['hora_inicio' => 'Ya existe otra función en esa sala con un horario que se cruza.'])->withInput();

@@ -21,7 +21,7 @@
 
             <!-- Duración -->
             <div class="mb-4">
-                <label class="block text-gray-700 font-semibold mb-2">Duración (minutos)</label>
+                <label class="block text-gray-700 font-semibold mb-2">Duración (en minutos)</label>
                 <input type="number" name="duracion" required
                        class="w-full border border-gray-300 rounded-lg px-4 py-2 text-black">
             </div>
@@ -29,14 +29,25 @@
             <!-- Género -->
             <div class="mb-4">
                 <label class="block text-gray-700 font-semibold mb-2">Género</label>
-                <input type="text" name="genero" required
-                       class="w-full border border-gray-300 rounded-lg px-4 py-2 text-black">
+                <select name="genero" required
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2 text-black">
+                    <option value="">Seleccione un género</option>
+                    <option value="Acción">Acción</option>
+                    <option value="Comedia">Comedia</option>
+                    <option value="Drama">Drama</option>
+                    <option value="Terror">Terror</option>
+                    <option value="Animación">Animación</option>
+                    <option value="Fantasía">Fantasía</option>
+                    <option value="Ciencia ficción">Ciencia ficción</option>
+                    <option value="Romance">Romance</option>
+                    <option value="Documental">Documental</option>
+                </select>
             </div>
 
             <!-- Imagen -->
             <div class="mb-6">
-                <label class="block text-gray-700 font-semibold mb-2">Imagen (opcional)</label>
-                <input type="file" name="imagen"
+                <label class="block text-gray-700 font-semibold mb-2">Imagen (sube un archivo)</label>
+                <input type="file" name="imagen" accept="image/*" required
                        class="w-full border border-gray-300 rounded-lg px-4 py-2 text-black bg-white">
             </div>
 
