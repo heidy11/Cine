@@ -201,7 +201,7 @@ class FuncionController extends Controller
             ->orderBy('hora_inicio')
             ->get();
 
-        return view('horarios', compact('pelicula', 'funciones'));
+        return view('pelicula.horarios', compact('pelicula', 'funciones'));
     }
 
     public function show(Funcion $funcion)

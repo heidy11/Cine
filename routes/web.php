@@ -71,6 +71,9 @@ Route::get('/register', [RegisteredUserController::class, 'create'])->name('regi
 Route::post('/register', [RegisteredUserController::class, 'store'])->name('register.store');
 
 
+Route::get('/pelicula/{pelicula}/horarios', [FuncionController::class, 'verHorarios'])->name('pelicula.horarios');
+
+
 
 
 // Cargar autenticación de Laravel
