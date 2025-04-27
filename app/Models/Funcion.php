@@ -21,6 +21,10 @@ class Funcion extends Model
         
         'formato'
     ];
+    protected $casts = [
+        'hora_inicio' => 'datetime',
+        'hora_fin' => 'datetime',
+    ];
     public function getRouteKeyName()
     {
         return 'id_funcion';

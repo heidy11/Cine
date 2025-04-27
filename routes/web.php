@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CompraController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\PeliculaController;
@@ -70,10 +71,11 @@ Route::get('/register', function () {
 Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
 Route::post('/register', [RegisteredUserController::class, 'store'])->name('register.store');
 
-
+//Ver Horarios
 Route::get('/pelicula/{pelicula}/horarios', [FuncionController::class, 'verHorarios'])->name('pelicula.horarios');
 
-
+//Dashboard
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 
 // Cargar autenticación de Laravel

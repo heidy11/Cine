@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="min-h-screen bg-gradient-to-b from-gray-900 to-black py-20 px-8">
+    <div class="min-h-screen bg-[#220044] from-gray-900 to-black py-20 px-8">
         <div class="container mx-auto">
             <!-- Título principal -->
             <h1 class="text-6xl font-bold text-center text-yellow-400 mb-14 tracking-widest uppercase drop-shadow-[0_5px_5px_rgba(0,0,0,0.9)] animate-fade-in">
