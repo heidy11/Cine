@@ -39,7 +39,7 @@ class RegisteredUserController extends Controller
 
         event(new Registered($usuario));
 
-        return redirect()->route('dashboard')->with('success', 'Usuario registrado correctamente.');
+        return redirect()->route('login')->with('success', 'Usuario registrado correctamente.');
     }
 }
 

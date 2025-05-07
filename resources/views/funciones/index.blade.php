@@ -1,54 +1,73 @@
 <x-app-layout>
-    <div class="container mx-auto p-6 bg-gray-100 rounded-lg shadow-lg">
-        <h1 class="text-4xl font-extrabold mb-6 text-black text-center">🎭 Funciones Disponibles</h1>
+    <div class="min-h-screen bg-[#220044] py-10 px-6">
 
-        <div class="flex justify-end mb-4">
-            <a href="{{ route('funciones.create') }}" class="bg-blue-600 hover:bg-blue-700 text-black font-semibold py-2 px-5 rounded-lg shadow-md transition-all">
+        <h1 class="text-5xl font-extrabold text-center text-yellow-400 mb-10">
+            🎭 Funciones Disponibles
+        </h1>
+
+        <!-- Botón agregar función -->
+        <div class="flex justify-end mb-8">
+            <a href="{{ route('funciones.create') }}" class="bg-yellow-400 hover:bg-yellow-300 text-[#220044] font-bold py-3 px-6 rounded-2xl shadow-md transform hover:scale-105 transition">
                 ➕ Agregar Función
             </a>
         </div>
 
+        <!-- Mensaje de éxito -->
         @if(session('success'))
-            <div class="bg-green-500 text-black font-semibold px-4 py-3 rounded mb-4 text-center">
+            <div class="bg-green-100 border border-green-400 text-green-800 px-6 py-4 rounded-lg mb-8 shadow-md text-center font-semibold">
                 {{ session('success') }}
             </div>
         @endif
 
-        <div class="overflow-x-auto">
-            <table class="w-full bg-white shadow-md rounded-lg overflow-hidden">
-                <thead class="bg-blue-500 text-black uppercase text-sm">
-                    <tr>
-                        <th class="py-3 px-6 text-left text-black">Película</th>
-                        <th class="py-3 px-6 text-left text-black">Sala</th>
-                        <th class="py-3 px-6 text-left text-black">Hora de Inicio</th>
-                        <th class="py-3 px-6 text-left text-black">Hora de Fin</th>
-                        <th class="py-3 px-6 text-left text-black">Formato</th>
-                        <th class="py-3 px-6 text-center text-black">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($funciones as $funcion)
-                        <tr class="border-b hover:bg-gray-100">
-                            <td class="py-4 px-6 text-black">{{ $funcion->pelicula->titulo }}</td>
-                            <td class="py-4 px-6 text-black">{{ $funcion->sala->nombre }}</td>
-                            <td class="py-4 px-6 text-black">{{ $funcion->hora_inicio }}</td>
-                            <td class="py-4 px-6 text-black">{{ $funcion->hora_fin }}</td>
-                            <td class="py-4 px-6 text-black">{{ $funcion->formato }}</td>
-                            <td class="py-4 px-6 flex justify-center space-x-3">
-                            <a href="{{ route('funciones.edit', ['funcion' => $funcion->id_funcion]) }}" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded-lg shadow-md transition-all">
-                                    ✏️ Editar
-                                </a>
-                                <form action="{{ route('funciones.destroy', $funcion->id_funcion) }}" method="POST" class="inline">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-black font-semibold px-4 py-2 rounded-lg shadow-md transition-all">
-                                        ❌ Eliminar
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
+        <!-- Tabla de funciones -->
+        <div class="overflow-x-auto bg-white rounded-2xl shadow-2xl">
+            <table class="min-w-full table-auto">
+            <thead class="bg-[#220044] text-yellow-400 uppercase">
+    <tr>
+        <th class="py-4 px-6 text-center">Película</th>
+        <th class="py-4 px-6 text-center">Sala</th>
+        <th class="py-4 px-6 text-center">Fecha Inicio</th>
+        <th class="py-4 px-6 text-center">Fecha Fin</th>
+        <th class="py-4 px-6 text-center">Hora Inicio</th>
+        <th class="py-4 px-6 text-center">Hora Fin</th>
+        <th class="py-4 px-6 text-center">Formato</th>
+        <th class="py-4 px-6 text-center">Cartelera</th>
+        <th class="py-4 px-6 text-center">Acciones</th>
+    </tr>
+</thead>
+<tbody>
+    @foreach ($funciones as $funcion)
+        <tr class="border-b hover:bg-yellow-50 text-center">
+            <td class="px-6 py-4 text-[#220044] font-semibold">{{ $funcion->pelicula->titulo }}</td>
+            <td class="px-6 py-4 text-[#220044]">{{ $funcion->sala->nombre }}</td>
+            <td class="px-6 py-4 text-[#220044]">{{ \Carbon\Carbon::parse($funcion->fecha_inicio)->format('d/m/Y') }}</td>
+            <td class="px-6 py-4 text-[#220044]">{{ \Carbon\Carbon::parse($funcion->fecha_fin)->format('d/m/Y') }}</td>
+            <td class="px-6 py-4 text-[#220044]">{{ $funcion->hora_inicio }}</td>
+<td class="px-6 py-4 text-[#220044]">{{ $funcion->hora_fin }}</td>
+
+            <td class="px-6 py-4 text-[#220044]">{{ $funcion->formato }}</td>
+            <td class="px-6 py-4 text-[#220044]">{{ $funcion->duracion_cartelera }} días</td>
+            <td class="px-6 py-4">
+                <div class="flex justify-center space-x-3">
+                    <a href="{{ route('funciones.edit', $funcion->id_funcion) }}" class="bg-yellow-400 hover:bg-yellow-300 text-[#220044] font-bold px-4 py-2 rounded-lg shadow-md transform hover:scale-105 transition">
+                        ✏️ Editar
+                    </a>
+                    <form action="{{ route('funciones.destroy', $funcion->id_funcion) }}" method="POST" class="inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg shadow-md transform hover:scale-105 transition">
+                            ❌ Eliminar
+                        </button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+    @endforeach
+</tbody>
+
+
             </table>
         </div>
+
     </div>
 </x-app-layout>

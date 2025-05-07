@@ -1,47 +1,65 @@
-<nav class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16 items-center">
-            <div class="flex items-center gap-8">
+<nav class="bg-[#220044] border-b-4 border-yellow-500 shadow-xl font-sans">
+    <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
+        <div class="flex justify-between items-center h-20">
+            <!-- Sección izquierda -->
+            <div class="flex items-center gap-10">
                 <!-- Logo -->
-                <a href="{{ route('dashboard') }}">
-                    <img src="{{ asset('imagenes/logo-monje-campero.png') }}" alt="Logo" class="h-9 w-auto">
+                <a href="{{ route('dashboard') }}" class="flex items-center">
+                    <img src="{{ asset('imagenes/logo-monje-campero.png') }}" alt="Logo" class="h-12 w-auto drop-shadow-md">
                 </a>
 
                 <!-- CRUD solo para admin -->
                 @if(session('usuario_rol') == 1)
-                    <a href="{{ route('salas.index') }}" class="text-sm font-medium text-gray-800 dark:text-gray-200 hover:text-yellow-500">Salas</a>
-                    <a href="{{ route('peliculas.index') }}" class="text-sm font-medium text-gray-800 dark:text-gray-200 hover:text-yellow-500">Películas</a>
-                    <a href="{{ route('funciones.index') }}" class="text-sm font-medium text-gray-800 dark:text-gray-200 hover:text-yellow-500">Funciones</a>
+                    <a href="{{ route('salas.index') }}" class="text-lg font-semibold tracking-wide text-white hover:text-yellow-400 transition-all duration-300">
+                        🎟️ Salas
+                    </a>
+                    <a href="{{ route('peliculas.index') }}" class="text-lg font-semibold tracking-wide text-white hover:text-yellow-400 transition-all duration-300">
+                        🎬 Películas
+                    </a>
+                    <a href="{{ route('funciones.index') }}" class="text-lg font-semibold tracking-wide text-white hover:text-yellow-400 transition-all duration-300">
+                        📅 Funciones
+                    </a>
+                    <a href="{{ route('reservas.pendientes') }}" class="text-lg font-semibold tracking-wide text-white hover:text-yellow-400 transition-all duration-300">
+    ✅ Confirmar Entradas
+</a>
                 @endif
 
-                <!-- Cartelera -->
-                <a href="{{ route('cartelera') }}" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-2 px-4 rounded-lg shadow">
-                    🎬 Cartelera
+                <!-- Cartelera igual que los demás -->
+                <a href="{{ route('cartelera') }}" class="text-lg font-semibold tracking-wide text-white hover:text-yellow-400 transition-all duration-300">
+                    🎞️ Ver Cartelera
                 </a>
             </div>
 
-            <!-- Usuario autenticado -->
+            <!-- Sección derecha -->
             @if(Auth::check())
                 <div class="relative" x-data="{ open: false }">
                     <button onclick="document.getElementById('dropdown-user').classList.toggle('hidden')"
-                            class="text-sm font-semibold text-gray-800 dark:text-gray-200 hover:text-gray-500 focus:outline-none">
-                        {{ Auth::user()->nombre }} <span class="ml-1">▼</span>
+                        class="text-lg font-semibold text-white hover:text-yellow-300 transition duration-300">
+                        {{ Auth::user()->nombre }} <span class="ml-2">▼</span>
                     </button>
 
-                    <div id="dropdown-user" class="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-700 rounded-md shadow-lg hidden z-50">
-                        <form method="POST" action="{{ route('logout') }}">
+                    <div id="dropdown-user" class="absolute right-0 mt-3 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl hidden z-50 overflow-hidden">
+                    <a href="{{ route('perfil.edit') }}" 
+        class="block w-full text-left px-5 py-3 text-md font-medium text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300">
+        👤 Perfil
+    </a>   
+                    <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit"
-                                class="block w-full text-left px-4 py-2 text-sm text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600">
-                                Cerrar sesión
+                                class="block w-full text-left px-5 py-3 text-md font-medium text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300">
+                                🚪 Cerrar sesión
                             </button>
                         </form>
                     </div>
                 </div>
             @else
-                <div class="flex items-center gap-4">
-                    <a href="{{ route('login') }}" class="text-sm text-gray-800 dark:text-gray-300 hover:text-yellow-500">Iniciar sesión</a>
-                    <a href="{{ route('register') }}" class="text-sm text-gray-800 dark:text-gray-300 hover:text-yellow-500">Registrarse</a>
+                <div class="flex items-center gap-6">
+                    <a href="{{ route('login') }}" class="text-lg font-semibold text-white hover:text-yellow-400 transition duration-300">
+                        Iniciar sesión
+                    </a>
+                    <a href="{{ route('register') }}" class="text-lg font-semibold text-white hover:text-yellow-400 transition duration-300">
+                        Registrarse
+                    </a>
                 </div>
             @endif
         </div>

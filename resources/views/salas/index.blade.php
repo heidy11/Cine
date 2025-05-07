@@ -1,44 +1,68 @@
 <x-app-layout>
-    <div class="container mx-auto p-6">
-        <h1 class="text-3xl font-bold mb-4 text-white-800">Listado de Salas</h1>
+    <div class="min-h-screen bg-[#220044] py-10 px-6">
 
-        <a href="{{ route('salas.create') }}" class="bg-blue-600 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded shadow-md">
-            ➕ Crear Sala
-        </a>
+        <!-- Título principal -->
+        <h1 class="text-4xl font-extrabold text-center text-yellow-400 mb-10">
+            🏛️ Listado de Salas
+        </h1>
 
+        <!-- Botón crear sala -->
+        <div class="flex justify-end mb-6">
+            <a href="{{ route('salas.create') }}" class="bg-yellow-400 hover:bg-yellow-300 text-[#220044] font-bold py-2 px-6 rounded-2xl shadow-md transform hover:scale-105 transition">
+                ➕ Crear Sala
+            </a>
+        </div>
+
+        <!-- Mensaje de éxito -->
         @if(session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mt-4">
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6 shadow-md">
                 {{ session('success') }}
             </div>
         @endif
 
-        <table class="w-full mt-6 border-collapse border border-gray-300 shadow-lg">
-            <thead>
-                <tr class="bg-gray-300 text-gray-800">
-                    <th class="border border-gray-400 px-4 py-2">Nombre</th>
-                    <th class="border border-gray-400 px-4 py-2">Capacidad</th>
-                    <th class="border border-gray-400 px-4 py-2">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($salas as $sala)
-                    <tr class="bg-white hover:bg-gray-100">
-                        <td class="border border-gray-300 px-4 py-2 text-center">{{ $sala->nombre }}</td>
-                        <td class="border border-gray-300 px-4 py-2 text-center">{{ $sala->capacidad }}</td>
-                        <td class="border border-gray-300 px-4 py-2 text-center">
-                            <a href="{{ route('salas.edit', $sala) }}" class="bg-yellow-500 hover:bg-yellow-600 text-black px-3 py-1 rounded shadow-md mr-2">
-                                ✏️ Editar
-                            </a>
-                            <form action="{{ route('salas.destroy', $sala) }}" method="POST" class="inline">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded shadow-md">
-                                    ❌ Eliminar
-                                </button>
-                            </form>
-                        </td>
+        <!-- Tabla de salas -->
+        <div class="overflow-x-auto bg-white rounded-2xl shadow-2xl">
+            <table class="min-w-full table-auto">
+                <thead class="bg-[#220044] text-yellow-400">
+                    <tr>
+                        <th class="px-6 py-4 text-center text-lg">Nombre</th>
+                        <th class="px-6 py-4 text-center text-lg">Capacidad</th>
+                        <th class="px-6 py-4 text-center text-lg">Acciones</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @forelse ($salas as $sala)
+                        <tr class="border-b hover:bg-gray-100 text-center">
+                            <td class="px-6 py-4 text-[#220044] font-semibold">{{ $sala->nombre }}</td>
+                            <td class="px-6 py-4 text-[#220044] font-semibold">{{ $sala->capacidad }}</td>
+                            <td class="px-6 py-4">
+                                <div class="flex justify-center space-x-3">
+                                    <!-- Editar -->
+                                    <a href="{{ route('salas.edit', $sala) }}" class="bg-yellow-400 hover:bg-yellow-300 text-[#220044] font-bold px-4 py-2 rounded-lg shadow-md transform hover:scale-105 transition">
+                                        ✏️ Editar
+                                    </a>
+
+                                    <!-- Eliminar -->
+                                    <form action="{{ route('salas.destroy', $sala) }}" method="POST" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg shadow-md transform hover:scale-105 transition">
+                                            ❌ Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" class="px-6 py-4 text-center text-gray-500">
+                                No hay salas registradas todavía.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
     </div>
 </x-app-layout>

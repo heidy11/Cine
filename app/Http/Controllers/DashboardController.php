@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Pelicula;
 use App\Models\Funcion;
+use App\Models\Sala;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller

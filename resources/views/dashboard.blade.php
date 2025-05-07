@@ -1,48 +1,61 @@
 <x-app-layout>
-    <div class="min-h-screen bg-gradient-to-b from-purple-800 to-purple-900 py-10 px-4">
+    <div class="min-h-screen bg-[#220044] py-10 px-6">
 
         <!-- Título principal -->
-        <h1 class="text-4xl font-extrabold text-center text-yellow-400 mb-10 drop-shadow-md">
+        <h1 class="text-5xl font-extrabold text-center text-yellow-400 mb-14 drop-shadow-lg animate-pulse">
             🎬 Panel de Administración
         </h1>
 
-        <!-- Tarjetas de resumen -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <!-- Películas -->
-            <div class="bg-white p-6 rounded-2xl shadow-lg text-center">
-    <h2 class="text-lg font-bold text-gray-700">Películas activas</h2>
-    <p class="text-4xl font-extrabold text-purple-700 mt-4">{{ $peliculas }}</p>
-</div>
+        <!-- Tarjetas de resumen interactivas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-14">
+            
+            <!-- Películas activas -->
+            <a href="{{ route('peliculas.index') }}" class="block bg-white p-8 rounded-2xl shadow-xl transform hover:scale-105 transition duration-500 text-center">
+                <div class="text-5xl text-[#220044] mb-4">🎥</div>
+                <h2 class="text-xl font-bold text-[#220044]">Películas Activas</h2>
+                <p class="text-4xl font-extrabold text-[#220044] mt-2">{{ $peliculas }}</p>
+            </a>
 
-
-            <!-- Funciones -->
-            <div class="bg-white p-6 rounded-2xl shadow-lg text-center">
-                <h2 class="text-lg font-bold text-gray-700">Funciones programadas</h2>
-                <p class="text-4xl font-extrabold text-purple-700 mt-4">{{ $funciones }}</p>
-            </div>
+            <!-- Funciones programadas -->
+            <a href="{{ route('funciones.index') }}" class="block bg-white p-8 rounded-2xl shadow-xl transform hover:scale-105 transition duration-500 text-center">
+                <div class="text-5xl text-[#220044] mb-4">🎟️</div>
+                <h2 class="text-xl font-bold text-[#220044]">Funciones Programadas</h2>
+                <p class="text-4xl font-extrabold text-[#220044] mt-2">{{ $funciones }}</p>
+            </a>
 
             <!-- Entradas vendidas hoy -->
-            <div class="bg-white p-6 rounded-2xl shadow-lg text-center">
-                <h2 class="text-lg font-bold text-gray-700">Entradas vendidas hoy</h2>
-                <p class="text-4xl font-extrabold text-purple-700 mt-4">{{ $entradasVendidasHoy }}</p>
-            </div>
+            <a href="{{ route('funciones.index') }}" class="block bg-white p-8 rounded-2xl shadow-xl transform hover:scale-105 transition duration-500 text-center">
+                <div class="text-5xl text-[#220044] mb-4">🎫</div>
+                <h2 class="text-xl font-bold text-[#220044]">Entradas Vendidas Hoy</h2>
+                <p class="text-4xl font-extrabold text-[#220044] mt-2">{{ $entradasVendidasHoy }}</p>
+            </a>
 
             <!-- Ingresos de hoy -->
-            <div class="bg-white p-6 rounded-2xl shadow-lg text-center">
-                <h2 class="text-lg font-bold text-gray-700">Ingresos hoy</h2>
-                <p class="text-4xl font-extrabold text-purple-700 mt-4">Bs {{ number_format($ingresosHoy, 2) }}</p>
-            </div>
+            <a href="{{ route('funciones.index') }}" class="block bg-white p-8 rounded-2xl shadow-xl transform hover:scale-105 transition duration-500 text-center">
+                <div class="text-5xl text-[#220044] mb-4">💵</div>
+                <h2 class="text-xl font-bold text-[#220044]">Ingresos de Hoy</h2>
+                <p class="text-4xl font-extrabold text-[#220044] mt-2">Bs {{ number_format($ingresosHoy, 2) }}</p>
+            </a>
+
         </div>
 
         <!-- Accesos rápidos -->
-        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-14">
+            <a href="{{ route('peliculas.create') }}" class="block bg-yellow-400 hover:bg-yellow-300 text-[#220044] font-bold py-6 rounded-2xl text-center shadow-lg transition transform hover:scale-105">
+                🎥 Nueva Película
+            </a>
+            <a href="{{ route('funciones.create') }}" class="block bg-yellow-400 hover:bg-yellow-300 text-[#220044] font-bold py-6 rounded-2xl text-center shadow-lg transition transform hover:scale-105">
+                🎟️ Nueva Función
+            </a>
+            <a href="{{ route('salas.index') }}" class="block bg-yellow-400 hover:bg-yellow-300 text-[#220044] font-bold py-6 rounded-2xl text-center shadow-lg transition transform hover:scale-105">
+                🏛️ Gestionar Salas
+            </a>
+        </div>
 
-        <!-- (Opcional) Lugar para futuras gráficas -->
-        <div class="bg-white p-6 rounded-2xl shadow-lg">
-            <h2 class="text-2xl font-bold text-gray-700 mb-4 text-center">📈 Resumen de ventas (próximamente)</h2>
-            <div class="text-center text-gray-500 italic">
-                Aquí puedes agregar gráficos usando Chart.js en el futuro
-            </div>
+        <!-- Futuro: Gráficas de resumen -->
+        <div class="bg-white p-8 rounded-2xl shadow-2xl text-center">
+            <h2 class="text-3xl font-bold text-[#220044] mb-6">📈 Resumen de Ventas (próximamente)</h2>
+            <p class="text-gray-600 italic">Aquí podrás ver gráficas dinámicas de tus ingresos y ventas por película.</p>
         </div>
 
     </div>

@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CompraController;
@@ -10,73 +13,75 @@ use App\Http\Controllers\ButacaController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\SalaController;
-use App\Http\Controllers\PromocionController;
-use App\Http\Middleware\AdminMiddleware;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\PerfilController;
 
+// Página de bienvenida
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Dashboard (evita repetirlo dos veces)
-Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
+// Autenticación y perfil
+require __DIR__.'/auth.php';
 
-// ** Agrupamos Rutas Protegidas por Autenticación **
 Route::middleware(['auth'])->group(function () {
-    Route::post('/reservar', [ReservaController::class, 'store'])->name('reservar');
+    // Perfil de usuario
+    Route::get('/perfil', [PerfilController::class, 'edit'])->name('perfil.edit');
+    Route::post('/perfil', [PerfilController::class, 'update'])->name('perfil.update');
 
-    // ** Rutas para Administradores **
-   // Route::middleware(AdminMiddleware::class)->group(function () {
-        Route::resource('usuarios', UsuarioController::class);
-        Route::resource('peliculas', PeliculaController::class);
-        Route::resource('funciones', FuncionController::class)->parameters([
-            'funciones' => 'funcion'
-        ]);
-        
-        Route::resource('salas', SalaController::class);
-    
-
-    // ** Rutas para Usuarios Comunes **
-    Route::middleware('role:usuario')->group(function () {
-        Route::get('/comprar-boletos', [CompraController::class, 'index']);
-    });
-
-    // ** Perfil de Usuario **
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    // ** Rutas para Reservas **
-    Route::get('/reservar/{funcion}', [ReservaController::class, 'create'])->name('reservar.form');
-    Route::post('/reservar', [ReservaController::class, 'store'])->name('reservar');
-    Route::get('/mis-reservas', [ReservaController::class, 'index'])->name('reservas.index');
-
-    Route::get('/reservar/{funcion}', [ButacaController::class, 'show'])->name('butacas.show');  
-    Route::post('/reservar/{funcion}', [ReservaController::class, 'store'])->name('reservar.store');  
-
-    Route::get('/butacas/{funcion}', [ButacaController::class, 'show'])->name('butacas.show');
-
 });
-Route::get('/api/horas-disponibles', [App\Http\Controllers\FuncionController::class, 'horasDisponibles']);
-//HORARIOS
-Route::get('/peliculas/{pelicula}/horarios',[FuncionController::class, 'verHorarios'])->name('peliculas.horarios');
-// ** Cartelera de funciones (pública) **
-Route::get('/cartelera', [FuncionController::class, 'cartelera'])->name('cartelera');
-Route::get('/register', function () {
-    return view('auth.register'); // ✅ Muestra el formulario directamente
-})->name('register');
+
+// Dashboard
+Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+// Registro
 Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
 Route::post('/register', [RegisteredUserController::class, 'store'])->name('register.store');
 
-//Ver Horarios
+// Cartelera pública
+Route::get('/cartelera', [FuncionController::class, 'cartelera'])->name('cartelera');
+Route::get('/peliculas/{pelicula}/horarios', [FuncionController::class, 'verHorarios'])->name('peliculas.horarios');
 Route::get('/pelicula/{pelicula}/horarios', [FuncionController::class, 'verHorarios'])->name('pelicula.horarios');
+Route::get('/verificar-horario-disponible', [FuncionController::class, 'verificarHorario'])->name('funciones.verificarHorario');
+Route::get('/horarios-ocupados', [FuncionController::class, 'horariosOcupados'])->name('funciones.horariosOcupados');
+Route::get('/api/horas-disponibles', [FuncionController::class, 'horasDisponibles']);
 
-//Dashboard
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+// Rutas protegidas
+Route::middleware(['auth'])->group(function () {
 
+    // CRUDs administradores
+    Route::resource('usuarios', UsuarioController::class);
+    Route::resource('peliculas', PeliculaController::class);
+    Route::resource('funciones', FuncionController::class)->parameters(['funciones' => 'funcion']);
+    Route::resource('salas', SalaController::class);
 
-// Cargar autenticación de Laravel
-require __DIR__.'/auth.php';
+    // Compra de boletos
+    Route::get('/comprar-boletos', [CompraController::class, 'index'])->middleware('role:usuario');
+
+    // Reservas
+    Route::get('/mis-reservas', [ReservaController::class, 'index'])->name('reservas.index');
+    Route::post('/reservas', [ReservaController::class, 'store'])->name('reservas.store');
+    Route::post('/reservas/confirmar', [ReservaController::class, 'confirmarReserva'])->name('reservas.confirmar');
+    Route::post('/reservas/comprobante', [ReservaController::class, 'guardarComprobante'])->name('reservas.comprobante');
+    Route::post('/reservas/{id}/comprobante', [ReservaController::class, 'subirComprobante'])->name('subir.comprobante');
+
+    // Selección de butacas
+    Route::get('/reservar/cinema1/{funcion}', [ReservaController::class, 'reservarCinema1'])->name('reservar.cinema1');
+    Route::get('/reservar/cinema2/{funcion}', [ReservaController::class, 'reservar'])->name('reservar.cinema2');
+    Route::get('/butacas/{funcion}', [ButacaController::class, 'show'])->name('butacas.show');
+
+    // Formulario de reserva
+    Route::get('/reservar/{funcion}', [ReservaController::class, 'create'])->name('reservar.form');
+    Route::post('/reservar/{funcion}', [ReservaController::class, 'store'])->name('reservar.store');
+
+    // ADMIN - Gestión de reservas
+    Route::get('/admin/reservas/pendientes', [ReservaController::class, 'pendientes'])->name('reservas.pendientes');
+    Route::post('/admin/reservas/{id}/aprobar', [ReservaController::class, 'aprobarReserva'])->name('admin.reservas.aprobar');
+    Route::post('/admin/reservas/{id}/rechazar', [ReservaController::class, 'rechazarReserva'])->name('admin.reservas.rechazar');
+
+    // Confirmación/Rechazo (PUT)
+    Route::put('/reservas/{id}/confirmar', [ReservaController::class, 'confirmar'])->name('reservas.confirmar.estado');
+    Route::put('/reservas/{id}/rechazar', [ReservaController::class, 'rechazar'])->name('reservas.rechazar.estado');
+});

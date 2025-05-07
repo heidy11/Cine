@@ -1,102 +1,129 @@
 <x-app-layout>
-    <div class="container mx-auto p-6 bg-white rounded-lg shadow-lg max-w-lg">
-        <h1 class="text-3xl font-extrabold mb-6 text-black text-center">✏️ Editar Función</h1>
+    <div class="min-h-screen bg-[#220044] py-10 px-6 flex items-center justify-center">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-2xl">
+            <h1 class="text-4xl font-extrabold text-center text-[#220044] mb-8">✏️ Editar Función</h1>
 
-        {{-- Validación de errores --}}
-        @if ($errors->any())
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-                <strong class="font-bold">⚠️ Errores:</strong>
-                <ul class="mt-2 list-disc list-inside">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+            {{-- Validación de errores --}}
+            @if ($errors->any())
+                <div class="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg mb-6 shadow-md">
+                    <strong class="font-bold">❗ Errores encontrados:</strong>
+                    <ul class="list-disc list-inside mt-2">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
-        <form action="{{ route('funciones.update', $funcion->id_funcion) }}" method="POST" class="space-y-4">
-            @csrf
-            @method('PUT')
+            <form action="{{ route('funciones.update', $funcion->id_funcion) }}" method="POST" class="space-y-6">
+                @csrf
+                @method('PUT')
 
-            {{-- Película --}}
-            <div>
-                <label class="block text-black font-semibold">🎬 Película:</label>
-                <select name="pelicula_id" class="border border-gray-300 rounded-lg px-4 py-2 w-full text-black" required>
-                    @foreach($peliculas as $pelicula)
-                        <option value="{{ $pelicula->id_pelicula }}" {{ $funcion->pelicula_id == $pelicula->id_pelicula ? 'selected' : '' }}>
-                            {{ $pelicula->titulo }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+                {{-- Película --}}
+                <div>
+                    <label class="block text-[#220044] font-semibold mb-2">🎬 Película:</label>
+                    <select name="pelicula_id" required class="form-select">
+                        @foreach($peliculas as $pelicula)
+                            <option value="{{ $pelicula->id_pelicula }}" {{ $funcion->pelicula_id == $pelicula->id_pelicula ? 'selected' : '' }}>
+                                {{ $pelicula->titulo }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
-            {{-- Sala --}}
-            <div>
-                <label class="block text-black font-semibold">🏛️ Sala:</label>
-                <select name="sala_id" class="border border-gray-300 rounded-lg px-4 py-2 w-full text-black" required>
-                    @foreach($salas as $sala)
-                        <option value="{{ $sala->id_sala }}" {{ $funcion->sala_id == $sala->id_sala ? 'selected' : '' }}>
-                            {{ $sala->nombre }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+                {{-- Sala --}}
+                <div>
+                    <label class="block text-[#220044] font-semibold mb-2">🏛️ Sala:</label>
+                    <select name="sala_id" required class="form-select">
+                        @foreach($salas as $sala)
+                            <option value="{{ $sala->id_sala }}" {{ $funcion->sala_id == $sala->id_sala ? 'selected' : '' }}>
+                                {{ $sala->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
-            {{-- Hora de Inicio --}}
-            <div>
-                <label class="block text-black font-semibold">🕒 Hora de Inicio:</label>
-                <input type="datetime-local" id="hora_inicio" name="hora_inicio"
-                       value="{{ \Carbon\Carbon::parse($funcion->hora_inicio)->format('Y-m-d\TH:i') }}"
-                       min="{{ \Carbon\Carbon::now()->format('Y-m-d\TH:i') }}"
-                       class="border border-gray-300 rounded-lg px-4 py-2 w-full text-black"
-                       required>
-            </div>
+                {{-- Fecha única --}}
+                <div>
+                    <label class="block text-[#220044] font-semibold mb-2">📅 Fecha:</label>
+                    <input type="text" id="fecha" name="fecha" class="form-input" value="{{ $funcion->fecha_inicio }}" required>
+                </div>
 
-            {{-- Hora de Fin --}}
-            <div>
-                <label class="block text-black font-semibold">🕕 Hora de Fin:</label>
-                <input type="datetime-local" id="hora_fin" name="hora_fin"
-                       value="{{ \Carbon\Carbon::parse($funcion->hora_fin)->format('Y-m-d\TH:i') }}"
-                       min="{{ \Carbon\Carbon::now()->addMinutes(10)->format('Y-m-d\TH:i') }}"
-                       class="border border-gray-300 rounded-lg px-4 py-2 w-full text-black"
-                       required>
-            </div>
+                {{-- Hora inicio y fin --}}
+                <div class="flex gap-4">
+                    <div class="w-1/2">
+                        <label class="block text-[#220044] font-semibold mb-2">🕒 Hora de Inicio:</label>
+                        <input type="time" name="hora_inicio" id="hora_inicio" class="form-input" value="{{ \Carbon\Carbon::parse($funcion->hora_inicio)->format('H:i') }}" required>
+                    </div>
+                    <div class="w-1/2">
+                        <label class="block text-[#220044] font-semibold mb-2">🕕 Hora de Fin:</label>
+                        <input type="time" name="hora_fin" id="hora_fin" class="form-input" value="{{ \Carbon\Carbon::parse($funcion->hora_fin)->format('H:i') }}" required>
+                    </div>
+                </div>
 
-            {{-- Formato --}}
-            <div>
-                <label class="block text-black font-semibold">📽️ Formato:</label>
-                <select name="formato" class="border border-gray-300 rounded-lg px-4 py-2 w-full text-black" required>
-                    <option value="2D" {{ $funcion->formato == '2D' ? 'selected' : '' }}>2D</option>
-                    <option value="3D" {{ $funcion->formato == '3D' ? 'selected' : '' }}>3D</option>
-                </select>
-            </div>
+                {{-- Formato --}}
+                <div>
+                    <label class="block text-[#220044] font-semibold mb-2">📽️ Formato:</label>
+                    <select name="formato" required class="form-select">
+                        <option value="2D" {{ $funcion->formato == '2D' ? 'selected' : '' }}>2D</option>
+                        <option value="3D" {{ $funcion->formato == '3D' ? 'selected' : '' }}>3D</option>
+                    </select>
+                </div>
 
-            {{-- Botones --}}
-            <div class="flex justify-between">
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md">
-                    💾 Actualizar
-                </button>
-                <a href="{{ route('funciones.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md">
-                    ⬅️ Cancelar
-                </a>
-            </div>
-        </form>
+                {{-- Botones --}}
+                <div class="flex justify-between">
+                    <button type="submit" class="btn-yellow">💾 Actualizar</button>
+                    <a href="{{ route('funciones.index') }}" class="btn-gray">↩️ Cancelar</a>
+                </div>
+            </form>
+        </div>
     </div>
 
-    {{-- Script para sugerir hora_fin automáticamente --}}
+    {{-- Flatpickr --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const horaInicio = document.getElementById('hora_inicio');
-            const horaFin = document.getElementById('hora_fin');
+        flatpickr("#fecha", {
+            dateFormat: "Y-m-d",
+            minDate: "today",
+            defaultDate: "{{ \Carbon\Carbon::parse($funcion->fecha_inicio)->format('Y-m-d') }}"
 
-            horaInicio.addEventListener('change', () => {
-                if (horaInicio.value) {
-                    const inicio = new Date(horaInicio.value);
-                    inicio.setMinutes(inicio.getMinutes() + 30); // puedes ajustar este valor
-                    horaFin.value = inicio.toISOString().slice(0, 16);
-                    horaFin.min = horaInicio.value;
+        });
+
+        // Sugerencia automática de hora fin
+        document.addEventListener('DOMContentLoaded', () => {
+            const inicio = document.getElementById('hora_inicio');
+            const fin = document.getElementById('hora_fin');
+
+            inicio.addEventListener('change', () => {
+                if (inicio.value) {
+                    const [h, m] = inicio.value.split(':');
+                    let hora = new Date();
+                    hora.setHours(parseInt(h));
+                    hora.setMinutes(parseInt(m) + 90);
+
+                    const hh = String(hora.getHours()).padStart(2, '0');
+                    const mm = String(hora.getMinutes()).padStart(2, '0');
+
+                    fin.value = `${hh}:${mm}`;
                 }
             });
         });
     </script>
+
+    {{-- Estilos --}}
+    <style>
+        .form-input {
+            @apply border border-gray-300 rounded-lg px-4 py-3 w-full focus:ring-2 focus:ring-yellow-400 focus:border-yellow-500;
+        }
+        .form-select {
+            @apply border border-gray-300 rounded-lg px-4 py-3 w-full focus:ring-2 focus:ring-yellow-400 focus:border-yellow-500;
+        }
+        .btn-yellow {
+            @apply bg-yellow-400 hover:bg-yellow-300 text-[#220044] font-bold py-3 px-6 rounded-lg shadow-md transform hover:scale-105 transition;
+        }
+        .btn-gray {
+            @apply bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transform hover:scale-105 transition;
+        }
+    </style>
 </x-app-layout>

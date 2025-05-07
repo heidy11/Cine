@@ -3,19 +3,18 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Auth;
 
 class AdminMiddleware
 {
-    public function handle(Request $request, Closure $next): Response
+    public function handle($request, Closure $next)
     {
-        // Verificar si el usuario es administrador
-        if (session('usuario_rol') != 1) {
-            return redirect('/dashboard')->withErrors(['error' => 'No tienes permiso para acceder.']);
+        // Verifica si el usuario es admin (ajusta según tu sistema)
+        if (Auth::check() && Auth::usuario()->rol === 'admin') {
+            return $next($request);
         }
 
-        return $next($request);
+        return redirect()->route('dashboard')->with('error', 'Acceso no autorizado.');
     }
 }
 

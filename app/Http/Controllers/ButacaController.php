@@ -38,87 +38,68 @@ class ButacaController extends Controller
     /**
      * Mostrar las butacas para una función específica.
      */
-    public function show($funcion_id)
-    {
-        $funcion = Funcion::findOrFail($funcion_id);
-        $formato = $funcion->formato;
+   public function show($funcion_id)
+{
+    $funcion = Funcion::findOrFail($funcion_id);
+    $formato = $funcion->formato;
 
-        // Lógica para Cinema 2 (3D)
-        if ($formato === '3D') {
-            $butacas_izquierda = [];
-            $numeros_impares = [23, 21, 19, 17, 15, 13, 11, 9, 7, 5, 3, 1];
+    // Obtener butacas ocupadas por nombre desde reservas
+    $ocupadas = Reserva::join('butacas', 'reservas.butaca_id', '=', 'butacas.id_butaca')
 
-            for ($fila = 1; $fila <= 15; $fila++) {
-                $fila_butacas = [];
-                foreach ($numeros_impares as $numero) {
-                    $fila_butacas[] = [
-                        'fila' => $fila,
-                        'numero' => $numero,
-                        'nombre' => "I{$fila}-{$numero}",
-                    ];
-                }
-                $butacas_izquierda[] = $fila_butacas;
+    ->where('reservas.funcion_id', $funcion_id)
+    ->whereIn('reservas.estado', ['pendiente', 'confirmada'])
+    ->pluck('butacas.numero')
+    ->toArray();
+
+
+    // === CINEMA 2 (3D) ===
+    if ($formato === '3D') {
+        $letras = range('A', 'H');
+        $pares = range(2, 24, 2);
+        $butacas_izquierda = [];
+
+        // Lado izquierdo: impares
+        for ($fila = 1; $fila <= 15; $fila++) {
+            $fila_butacas = [];
+            for ($numero = 23; $numero >= 1; $numero -= 2) {
+                $fila_butacas[] = [
+                    'nombre' => "I-{$fila}-{$numero}",
+                    'numero' => $numero
+                ];
             }
-
-            // Letras A a H en el centro
-            $letras = range('A', 'H');
-            $butacas_centro = [];
-            foreach (range(1, 15) as $fila) {
-                $fila_letras = [];
-                foreach ($letras as $letra) {
-                    $fila_letras[] = [
-                        'fila' => $fila,
-                        'letra' => $letra,
-                        'nombre' => "C{$fila}-{$letra}",
-                    ];
-                }
-                $butacas_centro[] = $fila_letras;
-            }
-
-            // Números pares para el lado derecho
-            $numeros_pares = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24];
-            $butacas_derecha = [];
-            for ($fila = 1; $fila <= 15; $fila++) {
-                $fila_butacas = [];
-                foreach ($numeros_pares as $numero) {
-                    $fila_butacas[] = [
-                        'fila' => $fila,
-                        'numero' => $numero,
-                        'nombre' => "D{$fila}-{$numero}",
-                    ];
-                }
-                $butacas_derecha[] = $fila_butacas;
-            }
-
-            return view('reservas.reservar', compact(
-                'butacas_izquierda',
-                'butacas_centro',
-                'butacas_derecha',
-                'funcion_id'
-            ));
+            $butacas_izquierda[] = $fila_butacas;
         }
 
-        // Lógica para Cinema 1 (2D)
-        if ($formato === '2D') {
-            $butacas_2d = [];
-            for ($fila = 1; $fila <= 10; $fila++) {
-                $fila_butacas = [];
-                for ($numero = 1; $numero <= 10; $numero++) {
-                    $fila_butacas[] = [
-                        'fila' => $fila,
-                        'numero' => $numero,
-                        'nombre' => "S{$fila}-{$numero}",
-                    ];
-                }
-                $butacas_2d[] = $fila_butacas;
-            }
-
-            return view('reservas.reservar_cinema1', compact('butacas_2d', 'funcion_id'));
-        }
-
-        // Si no es 2D ni 3D
-        abort(404, 'Formato de sala no reconocido.');
+        return view('reservas.reservar', [
+            'funcion_id' => $funcion_id,
+            'formato' => $formato,
+            'butacas_ocupadas' => $ocupadas,
+            'butacas_izquierda' => $butacas_izquierda
+        ]);
     }
+
+    // === CINEMA 1 (2D) ===
+    if ($formato === '2D') {
+        $filas = range(26, 1);
+        $impares = range(23, 1, -2);
+        $pares = range(2, 20, 2);
+        $letras = range('A', 'J');
+
+        // Lista de butacas que deseas ocultar visualmente
+        $butacas_omitidas = ['I-26-19','I-26-17','I-25-19','I-25-17', 'D-26-18','D-26-20','D-25-18','D-25-20'];
+
+        return view('reservas.reservar_cinema1', [
+            'funcion_id' => $funcion_id,
+            'formato' => $formato,
+            'butacas_ocupadas' => $ocupadas,
+            'butacas_omitidas' => $butacas_omitidas
+        ]);
+    }
+
+    // Si el formato no es reconocido
+    abort(404, 'Formato de sala no reconocido.');
+}
+
 
     public function edit(Butaca $butaca)
     {

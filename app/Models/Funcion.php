@@ -18,12 +18,15 @@ class Funcion extends Model
         'sala_id',
         'hora_inicio',
         'hora_fin',
-        
-        'formato'
+        'formato',
+        'fecha_inicio',
+        'fecha_fin',
+        'duracion_cartelera',
     ];
     protected $casts = [
-        'hora_inicio' => 'datetime',
-        'hora_fin' => 'datetime',
+        'hora_inicio' => 'string',
+        'hora_fin' => 'string',
+        'fechas' => 'array',
     ];
     public function getRouteKeyName()
     {
