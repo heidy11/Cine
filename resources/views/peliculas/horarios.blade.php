@@ -34,7 +34,8 @@
                                 📽️ Formato: <span class="font-bold">{{ $funcion->formato }}</span>
                             </div>
 
-                            <a href="{{ route('butacas.show', $funcion->id_funcion) }}" 
+                            <!-- Ruta actualizada -->
+                            <a href="{{ route('butacas.mostrar', $funcion->id_funcion) }}" 
                                class="mt-4 inline-block bg-yellow-400 hover:bg-yellow-300 text-[#220044] font-bold py-2 px-6 rounded-full shadow-md transform hover:scale-110 transition">
                                 🎟️ Reservar
                             </a>

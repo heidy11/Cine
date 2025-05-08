@@ -14,6 +14,8 @@ use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\SalaController;
 use App\Http\Controllers\PerfilController;
+use App\Http\Controllers\FuncionButacaController;
+use App\Models\FuncionButaca;
 
 // Página de bienvenida
 Route::get('/', function () {
@@ -61,27 +63,45 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/comprar-boletos', [CompraController::class, 'index'])->middleware('role:usuario');
 
     // Reservas
-    Route::get('/mis-reservas', [ReservaController::class, 'index'])->name('reservas.index');
-    Route::post('/reservas', [ReservaController::class, 'store'])->name('reservas.store');
-    Route::post('/reservas/confirmar', [ReservaController::class, 'confirmarReserva'])->name('reservas.confirmar');
-    Route::post('/reservas/comprobante', [ReservaController::class, 'guardarComprobante'])->name('reservas.comprobante');
-    Route::post('/reservas/{id}/comprobante', [ReservaController::class, 'subirComprobante'])->name('subir.comprobante');
+   // Route::get('/mis-reservas', [ReservaController::class, 'index'])->name('reservas.index');
+   // Route::post('/reservas', [ReservaController::class, 'store'])->name('reservas.store');
+   // Route::post('/reservas/confirmar', [ReservaController::class, 'confirmarReserva'])->name('reservas.confirmar');
+    //Route::get('/reservas/confirmar', [ReservaController::class, 'confirmarReserva'])->name('reservas.confirmar');
+    //Route::post('/reservas/comprobante', [ReservaController::class, 'guardarComprobante'])->name('reservas.comprobante');
+   // Route::post('/reservas/{id}/comprobante', [ReservaController::class, 'subirComprobante'])->name('subir.comprobante');
 
     // Selección de butacas
-    Route::get('/reservar/cinema1/{funcion}', [ReservaController::class, 'reservarCinema1'])->name('reservar.cinema1');
-    Route::get('/reservar/cinema2/{funcion}', [ReservaController::class, 'reservar'])->name('reservar.cinema2');
-    Route::get('/butacas/{funcion}', [ButacaController::class, 'show'])->name('butacas.show');
+   // Route::get('/reservar/cinema1/{funcion}', [ReservaController::class, 'reservarCinema1'])->name('reservar.cinema1');
+   // Route::get('/reservar/cinema2/{funcion}', [ReservaController::class, 'reservar'])->name('reservar.cinema2');
+  // Route::get('/butacas/{funcion}', [ButacaController::class, ''])->name('reservar.reservar');
+  Route::get('/butacas/ver/{funcion_id}', [ButacaController::class, 'mostrarButacasPorSala'])->name('butacas.mostrar');
 
     // Formulario de reserva
-    Route::get('/reservar/{funcion}', [ReservaController::class, 'create'])->name('reservar.form');
-    Route::post('/reservar/{funcion}', [ReservaController::class, 'store'])->name('reservar.store');
+    //Route::get('/reservar/{funcion}', [ReservaController::class, 'create'])->name('reservar.form');
+    //Route::post('/reservar/{funcion}', [ReservaController::class, 'store'])->name('reservar.store');
 
     // ADMIN - Gestión de reservas
-    Route::get('/admin/reservas/pendientes', [ReservaController::class, 'pendientes'])->name('reservas.pendientes');
-    Route::post('/admin/reservas/{id}/aprobar', [ReservaController::class, 'aprobarReserva'])->name('admin.reservas.aprobar');
-    Route::post('/admin/reservas/{id}/rechazar', [ReservaController::class, 'rechazarReserva'])->name('admin.reservas.rechazar');
+   
+    Route::get('/admin/comprobantes', [FuncionButacaController::class, 'verComprobantes'])->name('admin.comprobantes');
 
     // Confirmación/Rechazo (PUT)
-    Route::put('/reservas/{id}/confirmar', [ReservaController::class, 'confirmar'])->name('reservas.confirmar.estado');
-    Route::put('/reservas/{id}/rechazar', [ReservaController::class, 'rechazar'])->name('reservas.rechazar.estado');
-});
+    //Route::put('/reservas/{id}/confirmar', [ReservaController::class, 'confirmar'])->name('reservas.confirmar.estado');
+    //Route::put('/reservas/{id}/rechazar', [ReservaController::class, 'rechazar'])->name('reservas.rechazar.estado');
+    Route::get('/butacas/generar/{sala_id}', [ButacaController::class, 'generarButacasPorSala']);
+    Route::post('/funcion/{id}/asignar-butacas', [FuncionButacaController::class, 'asignarButacas']);
+    Route::post('/funcion-butaca/confirmar', [FuncionButacaController::class, 'confirmarReserva'])->name('funcion.butaca.comprobante');
+    Route::post('/funcion-butaca/reservar', [FuncionButacaController::class, 'reservar'])->name('funcion-butaca.reservar');
+    Route::post('/funcion-butaca/confirmar', [FuncionButacaController::class, 'confirmarReserva'])->name('funcion-butaca.confirmar');
+    Route::post('/funcion-butaca/comprobante', [FuncionButacaController::class, 'subirComprobante'])->name('funcion.butaca.comprobante');
+    Route::get('/reservar/{funcion_id}', [FuncionButacaController::class, 'mostrarVistaReserva']);
+
+    Route::get('/admin/comprobantes', [FuncionButacaController::class, 'verComprobantes'])
+    ->name('admin.comprobantes');
+    Route::get('/mis-entradas', [FuncionButacaController::class, 'misEntradas'])
+        ->name('usuario.entradas');
+        Route::post('/admin/comprobantes/aceptar/{id}', [FuncionButacaController::class, 'aceptarComprobante'])->name('admin.comprobantes.aceptar');
+Route::post('/admin/comprobantes/rechazar/{id}', [FuncionButacaController::class, 'rechazarComprobante'])->name('admin.comprobantes.rechazar');
+
+}   
+
+);

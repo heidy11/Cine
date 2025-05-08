@@ -19,12 +19,7 @@ class Pago extends Model
         'fecha_pago',
     ];
 
-    // Un pago pertenece a una reserva
-    public function reserva()
-    {
-        return $this->belongsTo(Reserva::class, 'reserva_id');
-    }
-
+    
     // Un pago puede tener una compra asociada
     public function compra()
     {

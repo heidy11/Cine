@@ -9,8 +9,6 @@
             ⏳ Tienes <span id="timer">20:00</span> minutos para subir tu comprobante antes de que tus entradas sean liberadas.
         </div>
 
-        
-
         {{-- Información de la función --}}
         <div class="mb-4">
             <p><strong>🎬 Película:</strong> {{ $funcion->pelicula->titulo }}</p>
@@ -24,32 +22,36 @@
             <p><strong>🪑 Butacas seleccionadas:</strong></p>
             <ul class="list-disc list-inside text-gray-700">
             @foreach($butacas as $butaca)
-        <li>{{ $butaca->numero }}</li>
-    @endforeach
+    <li>Fila {{ $butaca->fila_pos }} - Columna {{ $butaca->columna_pos }}</li>
+    <input type="hidden" name="butacas[]" value="{{ $butaca->id_butaca }}">
+@endforeach
 
             </ul>
         </div>
 
         {{-- Total --}}
         <div class="mb-4 text-lg font-semibold">
-            💵 Total a pagar: Bs. {{ $total }} ({{ count($butacas) }} entradas a Bs. )
+            💵 Total a pagar: Bs. {{ $total }} ({{ count($butacas) }} entradas)
         </div>
 
-            {{-- QR de pago --}}
-            <div class="mt-6 text-center">
-    <h2 class="text-lg font-semibold mb-2">📱 Escanea este QR con YaSta y paga exactamente:</h2>
-    <p class="text-2xl font-bold text-green-700 mb-4">Bs {{ $total }}</p>
-    <img src="{{ asset('imagenes/qrsimple.jpeg') }}" alt="QR YaSta" class="mx-auto w-60 h-60 rounded border shadow">
-</div>
+        {{-- QR de pago --}}
+        <div class="mt-6 text-center">
+            <h2 class="text-lg font-semibold mb-2">📱 Escanea este QR con YaSta y paga exactamente:</h2>
+            <p class="text-2xl font-bold text-green-700 mb-4">Bs {{ $total }}</p>
+            <img src="{{ asset('imagenes/qrsimple.jpeg') }}" alt="QR YaSta" class="mx-auto w-60 h-60 rounded border shadow">
+        </div>
+        
 
-
-{{-- Formulario para subir comprobante --}}
-        <form action="{{ route('reservas.comprobante') }}" method="POST" enctype="multipart/form-data">
+        {{-- Formulario para subir comprobante --}}
+        <form action="{{ route('funcion.butaca.comprobante') }}" method="POST" enctype="multipart/form-data" class="mt-8">
             @csrf
             <input type="hidden" name="funcion_id" value="{{ $funcion->id_funcion }}">
-            @foreach($butacas as $butaca)
-                <input type="hidden" name="butacas[]" value="{{ $butaca }}">
+
+            @foreach($butacas as $fb)
+                <input type="hidden" name="butacas[]" value="{{ $fb->id_butaca }}"> {{-- ID de funcion_butaca --}}
             @endforeach
+
+            <input type="hidden" name="total" value="{{ $total }}">
 
             <div class="mb-4">
                 <label for="comprobante" class="block font-medium mb-1">📎 Subir comprobante de pago (JPG, PNG o PDF):</label>

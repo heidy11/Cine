@@ -45,12 +45,6 @@ class Funcion extends Model
     }
 
     // Una función puede tener muchas butacas
-    public function butacas()
-    {
-        return $this->hasMany(Butaca::class, 'funcion_id');
-    }
-    public function reservas ()
-    {
-        return $this->hasMany(Reserva::class, 'funcion_id');
-    }
+    
+    
 }

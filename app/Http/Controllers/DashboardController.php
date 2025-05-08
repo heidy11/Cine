@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Pelicula;
 use App\Models\Funcion;
 use App\Models\Sala;
+use App\Models\FuncionButaca;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -19,9 +20,9 @@ class DashboardController extends Controller
         $funciones = Funcion::count();
 
         // Consultar entradas vendidas hoy
-        $entradasVendidasHoy = DB::table('reservas')
-                                ->whereDate('created_at', today())
-                                ->count();
+        $entradasVendidasHoy = FuncionButaca::where('estado', 2) // Confirmadas
+    ->whereDate('updated_at', today())
+    ->count();
 
         // Consultar ingresos de hoy
         $ingresosHoy = DB::table('compras')

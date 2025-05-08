@@ -14,6 +14,8 @@ class Sala extends Model
     protected $fillable = [
         'nombre',
         'capacidad',
+        'numero_fila',
+        'numero_columna',
     ];
 
     // Una sala puede tener muchas funciones

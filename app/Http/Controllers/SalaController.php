@@ -23,6 +23,8 @@ class SalaController extends Controller
         $request->validate([
             'nombre' => 'required',
             'capacidad' => 'required|integer',
+            'numero_fila' => 'required|integer',
+            'numero_columna' => 'required|integer',
         ]);
 
         Sala::create($request->all());
@@ -46,6 +48,8 @@ class SalaController extends Controller
         $request->validate([
             'nombre' => 'required',
             'capacidad' => 'required|integer',
+            'numero_fila' => 'required|integer',
+            'numero_columna' => 'required|integer',
         ]);
 
         $sala->update($request->all());

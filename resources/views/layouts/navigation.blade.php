@@ -19,9 +19,13 @@
                     <a href="{{ route('funciones.index') }}" class="text-lg font-semibold tracking-wide text-white hover:text-yellow-400 transition-all duration-300">
                         📅 Funciones
                     </a>
-                    <a href="{{ route('reservas.pendientes') }}" class="text-lg font-semibold tracking-wide text-white hover:text-yellow-400 transition-all duration-300">
-    ✅ Confirmar Entradas
-</a>
+                    <a href="{{ route('admin.comprobantes') }}" class="text-lg font-semibold tracking-wide text-white hover:text-yellow-400 transition-all duration-300">
+                        📄 Comprobantes
+                    </a>
+                    <a href="{{ route('admin.comprobantes') }}" class="text-lg font-semibold tracking-wide text-white hover:text-yellow-400 transition-all duration-300">
+                        Mis entradas
+                    </a>
+                   
                 @endif
 
                 <!-- Cartelera igual que los demás -->

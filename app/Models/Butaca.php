@@ -14,15 +14,13 @@ class Butaca extends Model
     protected $fillable = [
         'funcion_id',
         'sala_id',
-        'numero',
+        'fila_pos',
+        'columna_pos',
         'estado',
     ];
 
     // Una butaca pertenece a una función
-    public function funcion()
-    {
-        return $this->belongsTo(Funcion::class, 'funcion_id');
-    }
+    
 
     // Una butaca pertenece a una sala
     public function sala()
