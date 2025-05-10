@@ -22,15 +22,16 @@
                     <a href="{{ route('admin.comprobantes') }}" class="text-lg font-semibold tracking-wide text-white hover:text-yellow-400 transition-all duration-300">
                         📄 Comprobantes
                     </a>
-                    <a href="{{ route('admin.comprobantes') }}" class="text-lg font-semibold tracking-wide text-white hover:text-yellow-400 transition-all duration-300">
-                        Mis entradas
-                    </a>
+                    
                    
                 @endif
 
                 <!-- Cartelera igual que los demás -->
                 <a href="{{ route('cartelera') }}" class="text-lg font-semibold tracking-wide text-white hover:text-yellow-400 transition-all duration-300">
                     🎞️ Ver Cartelera
+                </a>
+                <a href="{{ route('mis-entradas') }}" class="text-lg font-semibold tracking-wide text-white hover:text-yellow-400 transition-all duration-300">
+                    🏷️ Mis Entradas
                 </a>
             </div>
 

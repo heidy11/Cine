@@ -20,27 +20,36 @@
             @else
                 <!-- Grid de funciones -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-                    @foreach($funciones as $funcion)
-                        <div class="bg-white p-6 rounded-2xl shadow-2xl transform hover:scale-105 transition duration-300 flex flex-col items-center text-center space-y-4">
-                            <div class="text-2xl font-extrabold text-[#220044]">
-                                🕒 {{ \Carbon\Carbon::parse($funcion->hora_inicio)->format('d/m/Y H:i') }}
-                            </div>
+                @foreach($funciones as $fecha => $grupo)
+                <h2 class="text-xl font-bold text-yellow-300 mt-10 mb-4 border-b border-yellow-400 pb-2">
+    📅 {{ \Carbon\Carbon::parse($fecha)->locale('es')->translatedFormat('l d \d\e F Y') }}
+</h2>
 
-                            <div class="text-lg text-gray-700">
-                                🏛️ Sala: <span class="font-bold">{{ $funcion->sala->nombre }}</span>
-                            </div>
 
-                            <div class="text-lg text-gray-700">
-                                📽️ Formato: <span class="font-bold">{{ $funcion->formato }}</span>
-                            </div>
+    
+        @foreach($grupo as $funcion)
+            <div class="bg-white p-6 rounded-2xl shadow-2xl transform hover:scale-105 transition duration-300 flex flex-col items-center text-center space-y-4">
+                <div class="text-2xl font-extrabold text-[#220044]">
+                    🕒 {{ \Carbon\Carbon::parse($funcion->hora_inicio)->format('H:i') }}
+                </div>
 
-                            <!-- Ruta actualizada -->
-                            <a href="{{ route('butacas.mostrar', $funcion->id_funcion) }}" 
-                               class="mt-4 inline-block bg-yellow-400 hover:bg-yellow-300 text-[#220044] font-bold py-2 px-6 rounded-full shadow-md transform hover:scale-110 transition">
-                                🎟️ Reservar
-                            </a>
-                        </div>
-                    @endforeach
+                <div class="text-lg text-gray-700">
+                    🏛️ Sala: <span class="font-bold">{{ $funcion->sala->nombre }}</span>
+                </div>
+
+                <div class="text-lg text-gray-700">
+                    📽️ Formato: <span class="font-bold">{{ $funcion->formato }}</span>
+                </div>
+
+                <a href="{{ route('butacas.mostrar', $funcion->id_funcion) }}" 
+                   class="mt-4 inline-block bg-yellow-400 hover:bg-yellow-300 text-[#220044] font-bold py-2 px-6 rounded-full shadow-md transform hover:scale-110 transition">
+                    🎟️ Reservar
+                </a>
+            </div>
+        @endforeach
+    </div>
+@endforeach
+
                 </div>
             @endif
 

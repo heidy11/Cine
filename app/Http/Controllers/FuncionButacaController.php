@@ -33,7 +33,7 @@ class FuncionButacaController extends Controller
     public function confirmarReserva(Request $request)
     {
 
-       // dd($request->all());
+       //dd($request->all());
         $request->validate([
             'funcion_id' => 'required|exists:funciones,id_funcion',
             'butacas' => 'required|array',
@@ -46,15 +46,7 @@ class FuncionButacaController extends Controller
 
         $usuario_id = Auth::id();
         Log::info('Usuario autenticado: ' . $usuario_id);
-        // ✅ Registrar nuevas entradas en funcion_butaca
-        foreach ($request->butacas as $butaca_id) {
-            FuncionButaca::create([
-                'funcion_id' => $request->funcion_id,
-                'butaca_id' => $butaca_id,
-                'usuario_id' => $usuario_id,
-                'estado' => 1, // reservado
-            ]);
-        }
+        
     
         $total = $request->total;
     
@@ -96,7 +88,17 @@ class FuncionButacaController extends Controller
             $registro->usuario_id = $usuario_id;
             $registro->save();
         }
+        else{
+            FuncionButaca::create([
+                'funcion_id' => $request->funcion_id,
+                'butaca_id' => $butaca_id,
+                'usuario_id' => $usuario_id,
+                'estado' => 1, // reservado
+                'comprobante' => $comprobantePath,
+            ]);
+        }
     }
+     
 
     return redirect()->route('cartelera')->with('success', '✅ Reserva confirmada correctamente.');
 
@@ -189,15 +191,14 @@ public function mostrarVistaReserva($funcion_id)
 }
 public function misEntradas()
 {
-    $usuario_id = Auth::user()->id_usuario;
+    $usuario_id = Auth::id();
 
 $misEntradas = FuncionButaca::with(['funcion.pelicula', 'funcion.sala'])
     ->where('usuario_id', $usuario_id)
-    ->where('estado', 2) // Confirmadas
     ->get();
 
 
-    return view('usuario.mis-entradas', compact('misEntradas'));
+    return view('usuario.mis_entradas', compact('misEntradas'));
 }
 
 public function aceptarComprobante($id)

@@ -18,6 +18,11 @@
                 {{ session('success') }}
             </div>
         @endif
+        @if(session('error'))
+            <div class="bg-red-100 text-red-800 border border-red-300 px-4 py-2 rounded mb-4">
+                {{ session('error') }}
+            </div>
+        @endif
 
         <!-- Tabla de funciones -->
         <div class="overflow-x-auto bg-white rounded-2xl shadow-2xl">
@@ -52,13 +57,12 @@
                     <a href="{{ route('funciones.edit', $funcion->id_funcion) }}" class="bg-yellow-400 hover:bg-yellow-300 text-[#220044] font-bold px-4 py-2 rounded-lg shadow-md transform hover:scale-105 transition">
                         ✏️ Editar
                     </a>
-                    <form action="{{ route('funciones.destroy', $funcion->id_funcion) }}" method="POST" class="inline">
+                    <form action="{{ route('funciones.destroy', $funcion->id_funcion) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta función?');">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg shadow-md transform hover:scale-105 transition">
-                            ❌ Eliminar
-                        </button>
+                        <button type="submit" class="bg-red-500 text-white px-4 py-1 rounded">Eliminar</button>
                     </form>
+
                 </div>
             </td>
         </tr>

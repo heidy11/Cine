@@ -7,6 +7,7 @@ use App\Models\Pelicula;
 use App\Models\Sala;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Models\FuncionButaca;
 use App\Models\Butaca;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -101,7 +102,7 @@ class FuncionController extends Controller
             'hora_fin' => $request->hora_fin,
             'fecha_inicio' => $fecha,
             'fecha_fin' => $fecha,
-            'duracion_cartelera' => 1,
+            'duracion_cartelera' => 7,
         ]);
         
          // ✅ Ahora sí, ya tiene ID y se crean bien
@@ -175,30 +176,38 @@ class FuncionController extends Controller
 }
 
 
-    
+public function destroy(Funcion $funcion)
+{
+    Log::info('🔹 Intentando eliminar función.', ['id' => $funcion->id_funcion]);
 
-    public function destroy(Funcion $funcion)
-    {
-        Log::info('🔹 Intentando eliminar función.', ['id' => $funcion->id_funcion]);
+    // Revisar si existen butacas con estado reservado (1) o confirmado (2)
+    $tieneReservas = FuncionButaca::where('funcion_id', $funcion->id_funcion)
+        ->whereIn('estado', [1, 2])
+        ->exists();
 
-        if ($funcion->reservas()->exists()) {
-            Log::warning('❌ No se puede eliminar. Tiene reservas asociadas.', ['id' => $funcion->id_funcion]);
-            return redirect()->route('funciones.index')->with('error', 'No se puede eliminar la función porque tiene reservas asociadas.');
+        if ($tieneReservas) {
+            Log::warning('❌ No se puede eliminar. Tiene butacas reservadas o confirmadas.', ['id' => $funcion->id_funcion]);
+            return redirect()->route('funciones.index')->with('error', '⚠️ No se puede eliminar la función porque tiene butacas reservadas o confirmadas.');
         }
 
-        try {
-            DB::beginTransaction();
-            $funcion->delete();
-            DB::commit();
+    try {
+        DB::beginTransaction();
 
-            Log::info('✅ Función eliminada correctamente.', ['id' => $funcion->id_funcion]);
-            return redirect()->route('funciones.index')->with('success', 'Función eliminada correctamente.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('❌ Error al eliminar la función.', ['error' => $e->getMessage()]);
-            return back()->with('error', 'Error al eliminar la función: ' . $e->getMessage());
-        }
+        // Opcional: eliminar butacas asociadas a la función
+        FuncionButaca::where('funcion_id', $funcion->id_funcion)->delete();
+
+        $funcion->delete();
+        DB::commit();
+
+        Log::info('✅ Función eliminada correctamente.', ['id' => $funcion->id_funcion]);
+        return redirect()->route('funciones.index')->with('success', 'Función eliminada correctamente.');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        Log::error('❌ Error al eliminar la función.', ['error' => $e->getMessage()]);
+        return back()->with('error', 'Error al eliminar la función: ' . $e->getMessage());
     }
+}
+
 
     
     public function cartelera()
@@ -240,14 +249,21 @@ class FuncionController extends Controller
     }
 
     public function verHorarios(Pelicula $pelicula)
-{
-    $funciones = Funcion::with('sala')
-        ->where('pelicula_id', $pelicula->id_pelicula)
-        ->orderBy('hora_inicio')
-        ->get();
+    {
+        $hoy = Carbon::now('America/La_Paz')->toDateString();
 
-    return view('peliculas.horarios', compact('pelicula', 'funciones'));
-}
+        $funciones = Funcion::with('sala')
+        ->where('pelicula_id', $pelicula->id_pelicula)
+        ->where('fecha_inicio', '>=', $hoy)
+        ->orderBy('fecha_inicio')
+        ->orderBy('hora_inicio')
+        ->get()
+        ->groupBy('fecha_inicio');
+    
+    
+        return view('peliculas.horarios', compact('pelicula', 'funciones'));
+    }
+    
 
 
     public function show(Funcion $funcion)

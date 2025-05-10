@@ -36,8 +36,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Dashboard
-Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
+Route::middleware(['auth','admin'])->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 // Registro
 Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
 Route::post('/register', [RegisteredUserController::class, 'store'])->name('register.store');
@@ -62,31 +61,15 @@ Route::middleware(['auth'])->group(function () {
     // Compra de boletos
     Route::get('/comprar-boletos', [CompraController::class, 'index'])->middleware('role:usuario');
 
-    // Reservas
-   // Route::get('/mis-reservas', [ReservaController::class, 'index'])->name('reservas.index');
-   // Route::post('/reservas', [ReservaController::class, 'store'])->name('reservas.store');
-   // Route::post('/reservas/confirmar', [ReservaController::class, 'confirmarReserva'])->name('reservas.confirmar');
-    //Route::get('/reservas/confirmar', [ReservaController::class, 'confirmarReserva'])->name('reservas.confirmar');
-    //Route::post('/reservas/comprobante', [ReservaController::class, 'guardarComprobante'])->name('reservas.comprobante');
-   // Route::post('/reservas/{id}/comprobante', [ReservaController::class, 'subirComprobante'])->name('subir.comprobante');
-
-    // Selección de butacas
-   // Route::get('/reservar/cinema1/{funcion}', [ReservaController::class, 'reservarCinema1'])->name('reservar.cinema1');
-   // Route::get('/reservar/cinema2/{funcion}', [ReservaController::class, 'reservar'])->name('reservar.cinema2');
-  // Route::get('/butacas/{funcion}', [ButacaController::class, ''])->name('reservar.reservar');
+   
   Route::get('/butacas/ver/{funcion_id}', [ButacaController::class, 'mostrarButacasPorSala'])->name('butacas.mostrar');
 
-    // Formulario de reserva
-    //Route::get('/reservar/{funcion}', [ReservaController::class, 'create'])->name('reservar.form');
-    //Route::post('/reservar/{funcion}', [ReservaController::class, 'store'])->name('reservar.store');
-
+    
     // ADMIN - Gestión de reservas
    
     Route::get('/admin/comprobantes', [FuncionButacaController::class, 'verComprobantes'])->name('admin.comprobantes');
 
-    // Confirmación/Rechazo (PUT)
-    //Route::put('/reservas/{id}/confirmar', [ReservaController::class, 'confirmar'])->name('reservas.confirmar.estado');
-    //Route::put('/reservas/{id}/rechazar', [ReservaController::class, 'rechazar'])->name('reservas.rechazar.estado');
+    
     Route::get('/butacas/generar/{sala_id}', [ButacaController::class, 'generarButacasPorSala']);
     Route::post('/funcion/{id}/asignar-butacas', [FuncionButacaController::class, 'asignarButacas']);
     Route::post('/funcion-butaca/confirmar', [FuncionButacaController::class, 'confirmarReserva'])->name('funcion.butaca.comprobante');
@@ -94,14 +77,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/funcion-butaca/confirmar', [FuncionButacaController::class, 'confirmarReserva'])->name('funcion-butaca.confirmar');
     Route::post('/funcion-butaca/comprobante', [FuncionButacaController::class, 'subirComprobante'])->name('funcion.butaca.comprobante');
     Route::get('/reservar/{funcion_id}', [FuncionButacaController::class, 'mostrarVistaReserva']);
+    Route::delete('/funciones/{funcion}', [FuncionController::class, 'destroy'])->name('funciones.destroy');
 
-    Route::get('/admin/comprobantes', [FuncionButacaController::class, 'verComprobantes'])
-    ->name('admin.comprobantes');
     Route::get('/mis-entradas', [FuncionButacaController::class, 'misEntradas'])
         ->name('usuario.entradas');
         Route::post('/admin/comprobantes/aceptar/{id}', [FuncionButacaController::class, 'aceptarComprobante'])->name('admin.comprobantes.aceptar');
 Route::post('/admin/comprobantes/rechazar/{id}', [FuncionButacaController::class, 'rechazarComprobante'])->name('admin.comprobantes.rechazar');
-
+    Route::get('/entradas/mis-entradas', [FuncionButacaController::class, 'misEntradas'])->name('mis-entradas');
+        
 }   
 
 );

@@ -33,10 +33,7 @@ class Usuario extends Authenticatable
     }
 
     // Relación con Reservas
-    public function reservas()
-    {
-        return $this->hasMany(Reserva::class, 'reservar_id');
-    }
+    
 
     // Relación con Compras
     public function compras()
