@@ -84,7 +84,14 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/admin/comprobantes/aceptar/{id}', [FuncionButacaController::class, 'aceptarComprobante'])->name('admin.comprobantes.aceptar');
 Route::post('/admin/comprobantes/rechazar/{id}', [FuncionButacaController::class, 'rechazarComprobante'])->name('admin.comprobantes.rechazar');
     Route::get('/entradas/mis-entradas', [FuncionButacaController::class, 'misEntradas'])->name('mis-entradas');
-        
-}   
+//Boletos
+Route::get('/boleto/{uuid}', [FuncionButacaController::class, 'verBoleto'])->name('boleto.ver');
+// Ruta pública para que el usuario vea su QR personalizado
+Route::middleware(['auth'])->get('/mis-entradas/qr/{uuid}', [FuncionButacaController::class, 'mostrarQR'])->name('usuario.boleto.qr');
+// Ruta para validar el QR admin
+Route::middleware(['auth', 'admin'])->get('/admin/validar-boleto/{uuid}', [FuncionButacaController::class, 'validarBoleto'])->name('admin.validar.boleto');
 
-);
+Route::middleware(['auth'])->get('/mis-boletos/{uuid}', [FuncionButacaController::class, 'verBoleto'])->name('usuario.boleto.ver');
+
+
+});

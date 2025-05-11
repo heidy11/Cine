@@ -22,7 +22,7 @@
             <p><strong>🪑 Butacas seleccionadas:</strong></p>
             <ul class="list-disc list-inside text-gray-700">
             @foreach($butacas as $butaca)
-    <li>Fila {{ $butaca->fila_pos }} - Columna {{ $butaca->columna_pos }}</li>
+    <li>Butaca: {{$butaca->numero}}</li>
     <input type="hidden" name="butacas[]" value="{{ $butaca->id_butaca }}">
 @endforeach
 

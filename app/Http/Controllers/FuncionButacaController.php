@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 class FuncionButacaController extends Controller
 {
     public function asignarButacas($funcion_id)
@@ -47,7 +48,7 @@ class FuncionButacaController extends Controller
         $usuario_id = Auth::id();
         Log::info('Usuario autenticado: ' . $usuario_id);
         
-    
+       // dd($butacas->all());
         $total = $request->total;
     
         return view('reservas.confirmacion', [
@@ -191,12 +192,14 @@ public function mostrarVistaReserva($funcion_id)
 }
 public function misEntradas()
 {
+
     $usuario_id = Auth::id();
 
-$misEntradas = FuncionButaca::with(['funcion.pelicula', 'funcion.sala'])
+$misEntradas = FuncionButaca::with(['funcion.pelicula', 'funcion.sala', 'butaca'])
     ->where('usuario_id', $usuario_id)
     ->get();
 
+    //dd($misEntradas->all());
 
     return view('usuario.mis_entradas', compact('misEntradas'));
 }
@@ -227,4 +230,16 @@ public function rechazarComprobante($id)
     return back()->with('error', '❌ Comprobante rechazado y butaca liberada.');
 }
 
+public function verBoleto($uuid)
+{
+    $boleto = FuncionButaca::with('funcion.pelicula', 'funcion.sala')->findOrFail($uuid);
+
+    // URL que irá dentro del QR para que el admin lo escanee
+    $urlValidacion = route('admin.validar.boleto', $uuid);
+
+    // Generar el QR con esa URL
+    $qr = QrCode::size(250)->generate($urlValidacion);
+
+    return view('boletos.ver', compact('boleto', 'qr'));
+}
 }

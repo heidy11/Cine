@@ -3,12 +3,25 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class FuncionButaca extends Model
 {
     protected $table = 'funcion_butaca'; // nombre real de la tabla
-    protected $primaryKey = 'id_funcion_butaca'; // nombre real de la clave primaria
+    protected $primaryKey = 'id_funcion_butaca';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->id_funcion_butaca)) {
+                $model->id_funcion_butaca = (string) Str::uuid();
+            }
+        });
+    }
     protected $fillable = [
         'butaca_id',
         'funcion_id',
