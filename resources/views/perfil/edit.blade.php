@@ -15,7 +15,7 @@
 
         <!-- Nombre -->
         <div class="mb-6">
-            <label for="nombre" class="block mb-2 text-lg font-semibold text-gray-700">Nombre</label>
+            <label for="nombre" class="block mb-2 text-lg font-semibold text-gray-700">Nombre Completo</label>
             <input type="text" id="nombre" name="nombre" value="{{ old('nombre', $usuario->nombre) }}" required
                 class="w-full px-4 py-3 border rounded-lg focus:ring focus:ring-yellow-400 focus:outline-none">
             @error('nombre')

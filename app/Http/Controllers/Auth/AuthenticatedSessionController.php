@@ -20,8 +20,14 @@ class AuthenticatedSessionController extends Controller
 {
     // Validar los datos de entrada
     $request->validate([
-        'correo' => 'required|email',
+        'correo' => [
+            'required',
+            'email',
+            'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/'
+        ],
         'contrasena' => 'required',
+    ], [
+        'correo.regex' => 'Solo se permiten correos @gmail.com',
     ]);
 
     // Buscar al usuario en la base de datos

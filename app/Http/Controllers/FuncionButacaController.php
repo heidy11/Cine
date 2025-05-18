@@ -5,6 +5,7 @@ use App\Models\Butaca;
 use App\Models\Funcion;
 use App\Models\FuncionButaca;
 use App\Models\Usuario;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
@@ -31,9 +32,9 @@ class FuncionButacaController extends Controller
         return response()->json(['mensaje' => 'Butacas asignadas correctamente.']);
     }
 
+
     public function confirmarReserva(Request $request)
     {
-
        //dd($request->all());
         $request->validate([
             'funcion_id' => 'required|exists:funciones,id_funcion',
@@ -61,8 +62,6 @@ class FuncionButacaController extends Controller
 
     public function subirComprobante(Request $request)
 {
-    
-
     $request->validate([
         'funcion_id' => 'required|exists:funciones,id_funcion',
         'butacas' => 'required|array',
@@ -102,12 +101,7 @@ class FuncionButacaController extends Controller
      
 
     return redirect()->route('cartelera')->with('success', '✅ Reserva confirmada correctamente.');
-
-
-
 }
-
-    
 
 
 public function reservar(Request $request)
@@ -129,6 +123,8 @@ public function reservar(Request $request)
 
     return redirect()->back()->with('success', 'Reserva confirmada exitosamente.');
 }
+
+
 public function verComprobantes()
 {
     $comprobantes = DB::table('funcion_butaca')
@@ -185,11 +181,13 @@ public function mostrarVistaReserva($funcion_id)
     }
 
     return view('reservar_matriz', [
-        'funcion_id' => $funcion_id,
+        'funcion_id' => $funcion_id,                                                                                                                                    
         'matriz' => $matriz,
         'precio' => $funcion->formato === '3D' ? 35 : 30,
     ]);
 }
+
+
 public function misEntradas()
 {
 
@@ -241,5 +239,66 @@ public function verBoleto($uuid)
     $qr = QrCode::size(250)->generate($urlValidacion);
 
     return view('boletos.ver', compact('boleto', 'qr'));
+}
+
+public function validarBoleto($uuid)
+{
+    $boleto = FuncionButaca::with(['funcion.pelicula', 'funcion.sala', 'butaca'])->findOrFail($uuid);
+
+    return view('admin.validar-boletos', compact('boleto'));
+}
+
+public function marcarComoUsado($uuid)
+{
+    $boleto = FuncionButaca::findOrFail($uuid);
+
+    if ($boleto->usado == 1) {
+        return redirect()->back()->with('error', '⚠️ Este boleto ya fue validado.');
+    }
+
+    $boleto->usado = 1;
+    $boleto->save();
+
+    return redirect()->back()->with('success', '✅ Boleto validado correctamente.');
+}
+
+public function historial(Request $request)
+{
+    // Usar la fecha proporcionada o por defecto el día actual
+    $fecha = $request->input('fecha') ?? Carbon::now()->toDateString();
+
+    $ventas = FuncionButaca::with(['butaca', 'funcion.pelicula', 'funcion.sala'])
+                ->where('estado', 2)
+                ->whereDate('updated_at', $fecha)
+                ->get();
+
+    return view('admin.historial', compact('ventas', 'fecha'));
+}
+
+
+public function ingresosHoy(Request $request)
+{
+    // Tomar la fecha del formulario, o usar hoy por defecto
+    $fecha = $request->input('fecha')
+        ? Carbon::parse($request->input('fecha'))->startOfDay()
+        : Carbon::today();
+
+    // Ventas confirmadas del día seleccionado
+    $ventas = FuncionButaca::with(['funcion.pelicula', 'funcion.sala', 'butaca'])
+        ->where('estado', 2)
+        ->whereDate('funcion_butaca.updated_at', $fecha)
+        ->get();
+
+    $total = $ventas->sum(fn($venta) => $venta->funcion->precio ?? 0);
+
+    // Resumen de todos los días con ingresos (incluyendo o excluyendo fecha seleccionada, a elección)
+    $resumenAnteriores = FuncionButaca::selectRaw('DATE(funcion_butaca.updated_at) as fecha, COUNT(*) as entradas, SUM(funciones.precio) as ingresos')
+        ->join('funciones', 'funcion_butaca.funcion_id', '=', 'funciones.id_funcion')
+        ->where('estado', 2)
+        ->groupBy(DB::raw('DATE(funcion_butaca.updated_at)'))
+        ->orderByDesc('fecha')
+        ->get();
+
+    return view('admin.ingresos-hoy', compact('ventas', 'fecha', 'total', 'resumenAnteriores'));
 }
 }

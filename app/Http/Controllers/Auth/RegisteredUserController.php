@@ -24,9 +24,16 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:255',
-            'correo' => 'required|string|email|max:255|unique:usuarios,correo',
-            'contrasena' => 'required|string|min:8|confirmed',
+            'correo' => [
+                'required',
+                'email',
+                'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/'
+            ],
+            'contrasena' => 'required|string|min:6|confirmed',
+        ], [
+            'correo.regex' => 'Solo se permiten correos @gmail.com',
         ]);
+        
 
         $usuario = Usuario::create([
             'nombre' => $request->nombre,

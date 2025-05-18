@@ -69,6 +69,10 @@
                         <option value="3D" {{ $funcion->formato == '3D' ? 'selected' : '' }}>3D</option>
                     </select>
                 </div>
+                {{-- Precio --}}
+                <div>
+                    <label class="block text-[#220044] font-semibold mb-2">💵 Precio:</label>
+                    <input type="number" name="precio" class="form-input" value="{{ $funcion->precio }}" required>
 
                 {{-- Botones --}}
                 <div class="flex justify-between">

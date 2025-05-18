@@ -24,18 +24,19 @@
             </a>
 
             <!-- Entradas vendidas hoy -->
-            <a href="{{ route('funciones.index') }}" class="block bg-white p-8 rounded-2xl shadow-xl transform hover:scale-105 transition duration-500 text-center">
+            <a href="{{ route('ventas.historial') }}" class="block bg-white p-8 rounded-2xl shadow-xl transform hover:scale-105 transition duration-500 text-center">
                 <div class="text-5xl text-[#220044] mb-4">🎫</div>
                 <h2 class="text-xl font-bold text-[#220044]">Entradas Vendidas Hoy</h2>
                 <p class="text-4xl font-extrabold text-[#220044] mt-2">{{ $entradasVendidasHoy }}</p>
             </a>
 
             <!-- Ingresos de hoy -->
-            <a href="{{ route('funciones.index') }}" class="block bg-white p-8 rounded-2xl shadow-xl transform hover:scale-105 transition duration-500 text-center">
-                <div class="text-5xl text-[#220044] mb-4">💵</div>
-                <h2 class="text-xl font-bold text-[#220044]">Ingresos de Hoy</h2>
-                <p class="text-4xl font-extrabold text-[#220044] mt-2">Bs {{ number_format($ingresosHoy, 2) }}</p>
-            </a>
+<a href="{{ route('ingresos.hoy') }}" class="block bg-white p-8 rounded-2xl shadow-xl transform hover:scale-105 transition duration-500 text-center">
+    <div class="text-5xl text-[#220044] mb-4">💵</div>
+    <h2 class="text-xl font-bold text-[#220044]">Ingresos de Hoy</h2>
+    <p class="text-4xl font-extrabold text-[#220044] mt-2">Bs {{ number_format($ingresosHoy, 2) }}</p>
+</a>
+
 
         </div>
 
@@ -53,10 +54,7 @@
         </div>
 
         <!-- Futuro: Gráficas de resumen -->
-        <div class="bg-white p-8 rounded-2xl shadow-2xl text-center">
-            <h2 class="text-3xl font-bold text-[#220044] mb-6">📈 Resumen de Ventas (próximamente)</h2>
-            <p class="text-gray-600 italic">Aquí podrás ver gráficas dinámicas de tus ingresos y ventas por película.</p>
-        </div>
+        
 
     </div>
 </x-app-layout>

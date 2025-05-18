@@ -29,6 +29,7 @@ class FuncionButaca extends Model
         'estado',
         'comprobante',
         'fecha_reserva',
+        'usado'
     ];
     public function butaca()
 {

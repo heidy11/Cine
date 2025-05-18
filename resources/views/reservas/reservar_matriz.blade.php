@@ -8,57 +8,66 @@
             @csrf
             <input type="hidden" name="funcion_id" value="{{ $funcion_id }}">
 
-            <div class="flex flex-col items-center space-y-2">
-                @foreach ($matriz as $fila)
-                    <div class="flex items-center space-x-1">
-                        @foreach ($fila as $butaca)
-                            @php
-                                $estado = $butaca['estado_funcion'];
-                                $clase = match ($estado) {
-                                    1 => 'bg-green-500 text-white cursor-not-allowed opacity-70',
-                                    2 => 'bg-purple-400 text-white cursor-not-allowed opacity-70',
-                                    default => 'bg-gray-300 text-black hover:bg-yellow-300',
-                                };
-                            @endphp
+            {{-- Contenedor con scroll horizontal --}}
+            <div class="overflow-x-auto w-full">
+    <div class="inline-block space-y-2 min-w-[700px] px-2">
 
-                            @if($estado === 1 || $estado === 2)
-                                <div class="w-10 h-10 text-sm rounded flex items-center justify-center {{ $clase }}">
-                                    {{ $butaca['numero'] }}
-                                </div>
-                            @else
-                                <label class="butaca w-10 h-10 rounded flex items-center justify-center text-sm cursor-pointer transition {{ $clase }}">
-                                    <input type="checkbox" name="butacas[]" value="{{ $butaca['id'] }}" class="hidden peer">
-                                    <span class="peer-checked:bg-yellow-400 peer-checked:text-black block text-center w-full h-full leading-10 rounded">
-                                        {{ $butaca['numero'] }}
-                                    </span>
-                                </label>
-                            @endif
-                        @endforeach
-                    </div>
-                @endforeach
+                    @foreach ($matriz as $fila) 
+                        <div class="flex items-center space-x-1">
+                            @foreach ($fila as $butaca)
+                                @if($butaca['tipo'] === 1)
+                                    {{-- Pasillo o espacio no seleccionable --}}
+                                    <div class="w-10 h-10 text-sm rounded flex items-center justify-center bg-red-200 cursor-not-allowed border-2"></div> 
+                                @else
+                                    @php
+                                        $estado = $butaca['estado_funcion'];
+                                        $clase = match ($estado) {
+                                            1 => 'bg-green-500 text-white cursor-not-allowed opacity-70',
+                                            2 => 'bg-purple-400 text-white cursor-not-allowed opacity-70',
+                                            default => 'bg-gray-300 text-black hover:bg-yellow-300',
+                                        }; 
+                                    @endphp
+
+                                    @if($estado === 1 || $estado === 2)
+                                        <div class="w-10 h-10 text-sm rounded flex items-center justify-center {{ $clase }}">
+                                            {{ $butaca['numero'] }}
+                                        </div>
+                                    @else
+                                        <label class="butaca w-10 h-10 rounded flex items-center justify-center text-sm cursor-pointer transition {{ $clase }}">
+                                            <input type="checkbox" name="butacas[]" value="{{ $butaca['id'] }}" class="hidden peer">
+                                            <span class="peer-checked:bg-yellow-400 peer-checked:text-black block text-center w-full h-full leading-10 rounded">
+                                                {{ $butaca['numero'] }}
+                                            </span>
+                                        </label>
+                                    @endif
+                                @endif
+                            @endforeach
+                        </div>
+                    @endforeach
+                </div>
             </div>
 
             {{-- Leyenda --}}
             <div class="flex justify-center space-x-6 mt-6 mb-4">
-    <div class="flex items-center space-x-2">
-        <div class="w-5 h-5 bg-gray-300 rounded border border-gray-400"></div>
-        <span class="text-sm text-gray-700">Disponible</span>
-    </div>
-    <div class="flex items-center space-x-2">
-        <div class="w-5 h-5 bg-green-500 rounded border border-gray-600"></div>
-        <span class="text-sm text-gray-700">Reservado</span>
-    </div>
-    <div class="flex items-center space-x-2">
-        <div class="w-5 h-5 bg-purple-400 rounded border border-gray-600"></div>
-        <span class="text-sm text-gray-700">Ocupado</span>
-    </div>
-    <div class="flex items-center space-x-2">
-        <div class="w-5 h-5 bg-yellow-400 rounded border border-gray-600"></div>
-        <span class="text-sm text-gray-700">Seleccionado</span>
-    </div>
-</div>
+                <div class="flex items-center space-x-2">
+                    <div class="w-5 h-5 bg-gray-300 rounded border border-gray-400"></div>
+                    <span class="text-sm text-gray-700">Disponible</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div class="w-5 h-5 bg-green-500 rounded border border-gray-600"></div>
+                    <span class="text-sm text-gray-700">Reservado</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div class="w-5 h-5 bg-purple-400 rounded border border-gray-600"></div>
+                    <span class="text-sm text-gray-700">Ocupado</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div class="w-5 h-5 bg-yellow-400 rounded border border-gray-600"></div>
+                    <span class="text-sm text-gray-700">Seleccionado</span>
+                </div>
+            </div>
 
-
+            {{-- Resumen --}}
             <div class="text-center mt-4">
                 <p class="text-lg font-semibold text-gray-800">
                     🎟️ Butacas seleccionadas: <span id="cantidad">0</span> |

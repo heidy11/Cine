@@ -61,11 +61,17 @@
                 {{-- Formato --}}
                 <div>
                     <label class="block text-[#220044] font-semibold mb-2">📽️ Formato:</label>
+                
                     <select name="formato" required class="form-select">
                         <option value="" disabled selected>Seleccione un formato</option>
                         <option value="2D">2D</option>
                         <option value="3D">3D</option>
                     </select>
+                </div>
+                {{--PRecio--}}
+                <div>
+                    <label class="block text-[#220044] font-semibold mb-2">💵 Precio:</label>
+                    <input type="number" name="precio" class="form-input" placeholder="Precio de la entrada" required>
                 </div>
 
                 {{-- Botones --}}

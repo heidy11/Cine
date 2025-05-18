@@ -51,6 +51,7 @@ class FuncionController extends Controller
         'hora_fin' => 'required|date_format:H:i|after:hora_inicio',
         'formato' => 'required|in:2D,3D',
         'fechas' => 'required|string', // viene como string separado por comas
+        'precio' => 'required|numeric|min:2',
     ]);
     $peliculaId = $request->pelicula_id;
     $salaId = $request->sala_id;
@@ -103,6 +104,8 @@ class FuncionController extends Controller
             'fecha_inicio' => $fecha,
             'fecha_fin' => $fecha,
             'duracion_cartelera' => 7,
+            'precio' => $request->precio,
+
         ]);
         
          // ✅ Ahora sí, ya tiene ID y se crean bien
@@ -132,6 +135,7 @@ class FuncionController extends Controller
         'hora_fin' => 'required|date_format:H:i|after:hora_inicio',
         'formato' => 'required|in:2D,3D',
         'fecha' => 'required|date|after_or_equal:today',
+        'precio' => 'required|numeric|min:2',
     ]);
 
     $peliculaId = $request->pelicula_id;

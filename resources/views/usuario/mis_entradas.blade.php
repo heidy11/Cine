@@ -29,7 +29,11 @@
                                 <td class="border px-4 py-2">{{ $entrada->butaca->numero}}</td>
                                 <td class="border px-4 py-2">
                                     @if($entrada->estado == 2)
-                                        <span class="text-green-600 font-semibold">✅ Confirmado</span>
+                                        @if($entrada->usado == 1)
+                                            <span class="text-gray-500 font-semibold">🎟️ Usado</span>
+                                        @else
+                                            <span class="text-green-600 font-semibold">✅ Confirmado</span>
+                                        @endif
                                     @elseif($entrada->estado == 1)
                                         <span class="text-yellow-500 font-semibold">⏳ Pendiente</span>
                                     @else
@@ -37,15 +41,17 @@
                                     @endif
                                 </td>
                                 <td class="border px-4 py-2 text-center">
-    @if($entrada->estado == 2)
-        <a href="{{ route('usuario.boleto.ver', $entrada->id_funcion_butaca) }}"
-           class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-semibold text-sm py-1 px-3 rounded shadow transition">
-            📲 Ver entrada
-        </a>
-    @else
-        <span class="text-gray-400 italic text-sm">No disponible</span>
-    @endif
-</td>
+                                   
+                                     @if($entrada->estado == 2 && $entrada->usado == 0)
+                                         <a href="{{ route('usuario.boleto.ver', $entrada->id_funcion_butaca) }}"
+                                            class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-semibold text-sm py-1 px-3 rounded shadow transition">
+                                             📲 Ver entrada
+                                         </a>
+
+                                     @else
+                                         <span class="text-gray-400 italic text-sm">No disponible</span>
+                                     @endif
+                                </td>
 
                             </tr>
 

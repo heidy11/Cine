@@ -4,7 +4,7 @@
 
         <div class="mb-6 text-left text-gray-700">
             <p><strong>🎬 Película:</strong> {{ $boleto->funcion->pelicula->titulo }}</p>
-            <p><strong>📅 Fecha:</strong> {{ \Carbon\Carbon::parse($boleto->funcion->fecha)->translatedFormat('l d \d\e F Y') }}</p>
+            <p><strong>📅 Fecha:</strong> {{ \Carbon\Carbon::parse($boleto->funcion->fecha)->locale('es')->translatedFormat('l d \d\e F Y') }}</p>
             <p><strong>🕒 Hora:</strong> {{ substr($boleto->funcion->hora_inicio, 0, 5) }}</p>
             <p><strong>🏛️ Sala:</strong> {{ $boleto->funcion->sala->nombre }}</p>
             <p><strong>🪑 Butaca:</strong> {{ $boleto->butaca->numero }} </p>

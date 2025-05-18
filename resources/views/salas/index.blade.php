@@ -28,6 +28,10 @@
                                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transform hover:scale-105 transition">
                                 ✏️ Editar
                             </a>
+                            <a href="{{ route('salas.editor', $sala->id_sala) }}"
+                               class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transform hover:scale-105 transition">
+                                ✏️ Editar Butaca
+                            </a>
                             <form action="{{ route('salas.destroy', $sala->id_sala) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar esta sala?');">
                                 @csrf
                                 @method('DELETE')

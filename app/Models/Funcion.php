@@ -22,6 +22,7 @@ class Funcion extends Model
         'fecha_inicio',
         'fecha_fin',
         'duracion_cartelera',
+        'precio'
     ];
     protected $casts = [
         'hora_inicio' => 'string',

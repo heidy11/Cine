@@ -93,5 +93,22 @@ Route::middleware(['auth', 'admin'])->get('/admin/validar-boleto/{uuid}', [Funci
 
 Route::middleware(['auth'])->get('/mis-boletos/{uuid}', [FuncionButacaController::class, 'verBoleto'])->name('usuario.boleto.ver');
 
+//QR boleto 
+Route::middleware(['auth', 'admin'])->get('/admin/validar-boleto/{uuid}', [FuncionButacaController::class, 'validarBoleto'])->name('admin.validar.boleto');
+
+Route::middleware(['auth', 'admin'])->post('/admin/validar-boleto/{uuid}', [FuncionButacaController::class, 'marcarComoUsado'])->name('admin.marcar.usado');
+
+
+
+//historial de ventas
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/historial-ventas', [FuncionButacaController::class, 'historial'])->name('ventas.historial');
+    Route::get('/admin/ingresos-hoy', [FuncionButacaController::class, 'ingresosHoy'])->name('ingresos.hoy');
+    Route::get('/salas/{sala_id}/editor', [ButacaController::class, 'editorSala'])->name('salas.editor');
+Route::post('/butaca/actualizar', [ButacaController::class, 'actualizarButaca'])->name('butaca.actualizar');
+});
+
+
 
 });

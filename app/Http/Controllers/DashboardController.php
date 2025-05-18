@@ -25,9 +25,11 @@ class DashboardController extends Controller
     ->count();
 
         // Consultar ingresos de hoy
-        $ingresosHoy = DB::table('compras')
-                        ->whereDate('created_at', today())
-                        ->sum('monto_total');
+        $ingresosHoy = FuncionButaca::where('estado', 2)
+        ->whereDate('funcion_butaca.updated_at', today()) // ✅ Corrige la ambigüedad
+        ->join('funciones', 'funcion_butaca.funcion_id', '=', 'funciones.id_funcion')
+        ->sum('funciones.precio');
+    
 
         // Retornar la vista con las variables
         return view('dashboard', compact(

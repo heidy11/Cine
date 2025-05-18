@@ -36,6 +36,7 @@
         <th class="py-4 px-6 text-center">Hora Inicio</th>
         <th class="py-4 px-6 text-center">Hora Fin</th>
         <th class="py-4 px-6 text-center">Formato</th>
+        <th class="py-4 px-6 text-center">Precio</th>
         <th class="py-4 px-6 text-center">Cartelera</th>
         <th class="py-4 px-6 text-center">Acciones</th>
     </tr>
@@ -51,6 +52,7 @@
 <td class="px-6 py-4 text-[#220044]">{{ $funcion->hora_fin }}</td>
 
             <td class="px-6 py-4 text-[#220044]">{{ $funcion->formato }}</td>
+            <td class="px-6 py-4 text-[#220044]">Bs {{ number_format($funcion->precio, 2) }}</td>
             <td class="px-6 py-4 text-[#220044]">{{ $funcion->duracion_cartelera }} días</td>
             <td class="px-6 py-4">
                 <div class="flex justify-center space-x-3">

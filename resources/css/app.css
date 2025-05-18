@@ -22,4 +22,12 @@ body {
 .input-estilo-monje {
     @apply bg-white text-black font-semibold border border-yellow-400 focus:border-yellow-500 focus:ring-yellow-500 rounded-md shadow-sm w-full mt-1;
 }
+.nav-link {
+    @apply text-white text-lg font-semibold hover:text-yellow-400 transition-all duration-300 block md:inline-block my-2 md:my-0;
+}
+
+.dropdown-link {
+    @apply px-5 py-3 text-md font-medium text-white dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-yellow-700 transition-all duration-300 block;
+}
+
 

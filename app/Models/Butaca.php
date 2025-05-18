@@ -18,7 +18,7 @@ class Butaca extends Model
         'columna_pos',
         'estado',
     ];
-
+    //estados 1=asientos, 2=pasillo
     // Una butaca pertenece a una función
     
 
@@ -29,8 +29,5 @@ class Butaca extends Model
     }
 
     // Una butaca puede tener una reserva asociada
-    public function reserva()
-    {
-        return $this->hasOne(Reserva::class, 'butaca_id');
-    }
+  
 }

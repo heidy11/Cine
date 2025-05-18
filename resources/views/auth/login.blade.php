@@ -11,9 +11,9 @@
             <div>
                 <label for="correo" class="block text-sm font-semibold text-yellow-300 mb-1">Correo</label>
                 <input id="correo" name="correo" type="email" required autofocus
-                    value="{{ old('correo') }}"
-                    class="w-full px-4 py-2 bg-white text-black rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                <x-input-error :messages="$errors->get('correo')" class="mt-2 text-sm text-red-400" />
+    pattern="^[a-zA-Z0-9._%+-]+@gmail\.com$"
+    value="{{ old('correo') }}"
+    class="w-full px-4 py-2 bg-white text-black rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"> 
             </div>
 
             <!-- Contraseña -->

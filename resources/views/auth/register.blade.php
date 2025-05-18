@@ -9,19 +9,26 @@
 
             <!-- Nombre -->
             <div>
-                <label for="nombre" class="block text-sm font-semibold text-yellow-300 mb-1">Nombre</label>
+                <label for="nombre" class="block text-sm font-semibold text-yellow-300 mb-1">Nombre Completo</label>
                 <input id="nombre" name="nombre" type="text" required autofocus value="{{ old('nombre') }}"
                     class="w-full px-4 py-2 bg-white text-black rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
                 <x-input-error :messages="$errors->get('nombre')" class="mt-2 text-sm text-red-400" />
             </div>
 
             <!-- Correo -->
-            <div>
-                <label for="correo" class="block text-sm font-semibold text-yellow-300 mb-1">Correo</label>
-                <input id="correo" name="correo" type="email" required value="{{ old('correo') }}"
-                    class="w-full px-4 py-2 bg-white text-black rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                <x-input-error :messages="$errors->get('correo')" class="mt-2 text-sm text-red-400" />
-            </div>
+<div>
+    <label for="correo" class="block text-sm font-semibold text-yellow-300 mb-1">Correo (solo Gmail)</label>
+    <input id="correo" name="correo" type="email" required
+        pattern="^[a-zA-Z0-9._%+-]+@gmail\.com$"
+        value="{{ old('correo') }}"
+        class="w-full px-4 py-2 bg-white text-black rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
+    
+    {{-- Nota informativa visible para el usuario --}}
+    <p class="text-sm text-yellow-200 mt-1">⚠️ Solo se permiten correos @gmail.com</p>
+
+    <x-input-error :messages="$errors->get('correo')" class="mt-2 text-sm text-red-400" />
+</div>
+
 
             <!-- Contraseña -->
             <div>
