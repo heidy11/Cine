@@ -219,27 +219,38 @@ public function destroy(Funcion $funcion)
     {
         $usuario_id = Auth::id();
     
-        // Cargar las recomendaciones personales o colección vacía si no hay usuario o historial
         $personal = collect();
-        if ($usuario_id) {
-            $historialExiste = FuncionButaca::where('usuario_id', $usuario_id)
-                ->whereIn('estado', [1, 2])
-                ->exists();
-    
-            if ($historialExiste) {
-                $personal = (new FuncionButacaController)->obtenerRecomendacionesPersonales($usuario_id);
-            }
+
+    if ($usuario_id) {
+        $historialExiste = FuncionButaca::where('usuario_id', $usuario_id)
+            ->whereIn('estado', [1, 2])
+            ->exists();
+
+        if ($historialExiste) {
+            $personal = (new FuncionButacaController)->obtenerRecomendacionesPersonales($usuario_id);
         }
-    
-        // Cargar películas en tendencia
-        $tendencia = (new FuncionButacaController)->obtenerPeliculasEnTendencia();
-    
-        // Cargar todas las películas para cartelera
-        $peliculas = Pelicula::all();
-    
-        // Pasar las variables a la vista
-        return view('cartelera', compact('peliculas', 'personal', 'tendencia'));
     }
+
+    // Obtener películas de funciones activas: fecha/hora >= ahora
+    $ahora = Carbon::now();
+
+    $peliculas = Funcion::with('pelicula')
+        ->where(function ($query) use ($ahora) {
+            $query->where('fecha_inicio', '>', $ahora->toDateString())
+                ->orWhere(function ($q) use ($ahora) {
+                    $q->where('fecha_inicio', $ahora->toDateString())
+                      ->where('hora_inicio', '>=', $ahora->format('H:i:s'));
+                });
+        })
+        ->get()
+        ->pluck('pelicula')
+        ->unique('id_pelicula')
+        ->values();
+
+    $tendencia = (new FuncionButacaController)->obtenerPeliculasEnTendencia();
+
+    return view('cartelera', compact('peliculas', 'personal', 'tendencia'));
+}
     
     
     

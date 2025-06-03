@@ -307,7 +307,7 @@ public function obtenerPeliculasEnTendencia($limite = 3)
         $hoy = Carbon::now()->toDateString();
 
         // Obtener ids de películas en funciones activas y sus ventas
-        $peliculasConVentas = DB::table('funciones')
+        return DB::table('funciones')
         ->join('funcion_butaca', 'funciones.id_funcion', '=', 'funcion_butaca.funcion_id')
         ->join('peliculas', 'funciones.pelicula_id', '=', 'peliculas.id_pelicula')
         ->where('funciones.fecha_inicio', '>=', now()->toDateString())
@@ -318,7 +318,7 @@ public function obtenerPeliculasEnTendencia($limite = 3)
         ->limit(3)
         ->get();
 
-        return $peliculasConVentas;
+        
     }
 
     //////
