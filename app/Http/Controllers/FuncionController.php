@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\FuncionButaca;
 use App\Models\Butaca;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
@@ -216,19 +217,30 @@ public function destroy(Funcion $funcion)
     
     public function cartelera()
     {
-        $ahora = Carbon::now('America/La_Paz');
+        $usuario_id = Auth::id();
     
-        $peliculas = Pelicula::whereHas('funciones', function ($query) use ($ahora) {
-            $query->whereRaw('DATE_ADD(funciones.created_at, INTERVAL duracion_cartelera DAY) >= ?', [$ahora]);
-        })
-        ->with(['funciones' => function ($query) use ($ahora) {
-            $query->whereRaw('DATE_ADD(funciones.created_at, INTERVAL duracion_cartelera DAY) >= ?', [$ahora])
-                  ->orderBy('hora_inicio');
-        }, 'funciones.sala'])
-        ->get();
+        // Cargar las recomendaciones personales o colección vacía si no hay usuario o historial
+        $personal = collect();
+        if ($usuario_id) {
+            $historialExiste = FuncionButaca::where('usuario_id', $usuario_id)
+                ->whereIn('estado', [1, 2])
+                ->exists();
     
-        return view('cartelera', compact('peliculas'));
+            if ($historialExiste) {
+                $personal = (new FuncionButacaController)->obtenerRecomendacionesPersonales($usuario_id);
+            }
+        }
+    
+        // Cargar películas en tendencia
+        $tendencia = (new FuncionButacaController)->obtenerPeliculasEnTendencia();
+    
+        // Cargar todas las películas para cartelera
+        $peliculas = Pelicula::all();
+    
+        // Pasar las variables a la vista
+        return view('cartelera', compact('peliculas', 'personal', 'tendencia'));
     }
+    
     
     
 

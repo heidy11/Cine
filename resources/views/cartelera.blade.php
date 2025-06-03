@@ -77,7 +77,49 @@
                     @endforeach
                 </div>
             @endif
+            @if($personal->isNotEmpty())
+<section class="mb-16">
+    <h2 class="text-yellow-400 text-4xl font-extrabold mb-8 text-center">Recomendaciones para ti</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        @foreach($personal as $funcion)
+        <div class="bg-gray-800 text-yellow-300 p-4 rounded-lg shadow-md flex flex-col justify-between">
+            <div>
+                <h3 class="font-bold text-xl mb-2">{{ $funcion->pelicula->titulo }}</h3>
+                <p><strong>Género:</strong> {{ $funcion->pelicula->genero }}</p>
+                <p><strong>Director:</strong> {{ $funcion->pelicula->director }}</p>
+                <p><strong>Horario:</strong> {{ \Carbon\Carbon::parse($funcion->hora_inicio)->format('d/m/Y H:i') }}</p>
+            </div>
+            <a href="{{ route('reservar', $funcion->id_funcion) }}" class="bg-yellow-400 text-[#220044] font-bold py-2 px-4 rounded hover:bg-yellow-500 transition">
+                🎟️ Reservar
+            </a>
         </div>
+        @endforeach
+    </div>
+</section>
+@endif
+
+@if($tendencia->isNotEmpty())
+<section class="mb-16">
+    <h2 class="text-yellow-400 text-4xl font-extrabold mb-8 text-center">Películas en tendencia</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        @foreach($tendencia as $pelicula)
+        <div class="bg-gray-800 text-yellow-300 p-4 rounded-lg shadow-md flex flex-col justify-between">
+            <div>
+                <h3 class="font-bold text-xl mb-2">{{ $pelicula->titulo }}</h3>
+                <p><strong>Género:</strong> {{ $pelicula->genero }}</p>
+                <p><strong>Director:</strong> {{ $pelicula->director }}</p>
+            </div>
+            <a href="{{ route('pelicula.horarios', $pelicula->id_pelicula) }}" class="bg-yellow-400 text-[#220044] font-bold py-2 px-4 rounded hover:bg-yellow-500 transition">
+                🎥 Ver horarios
+            </a>
+        </div>
+        @endforeach
+    </div>
+</section>
+@endif
+
+        </div>
+       
     </div>
 
     <!-- Estilos extra -->

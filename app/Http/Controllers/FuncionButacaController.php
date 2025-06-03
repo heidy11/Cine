@@ -9,6 +9,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use App\Models\Pelicula;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -301,4 +302,109 @@ public function ingresosHoy(Request $request)
 
     return view('admin.ingresos-hoy', compact('ventas', 'fecha', 'total', 'resumenAnteriores'));
 }
+public function obtenerPeliculasEnTendencia($limite = 3)
+    {
+        $hoy = Carbon::now()->toDateString();
+
+        // Obtener ids de películas en funciones activas y sus ventas
+        $peliculasConVentas = DB::table('funciones')
+        ->join('funcion_butaca', 'funciones.id_funcion', '=', 'funcion_butaca.funcion_id')
+        ->join('peliculas', 'funciones.pelicula_id', '=', 'peliculas.id_pelicula')
+        ->where('funciones.fecha_inicio', '>=', now()->toDateString())
+        ->whereIn('funcion_butaca.estado', [1, 2])
+        ->select('peliculas.id_pelicula', 'peliculas.titulo', 'peliculas.genero', 'peliculas.director', DB::raw('COUNT(funcion_butaca.id_funcion_butaca) as total_ventas'))
+        ->groupBy('peliculas.id_pelicula', 'peliculas.titulo', 'peliculas.genero', 'peliculas.director')
+        ->orderByDesc('total_ventas')
+        ->limit(3)
+        ->get();
+
+        return $peliculasConVentas;
+    }
+
+    //////
+    public function obtenerRecomendacionesPersonales($user_id, $limite = 6)
+    {
+        $historial = FuncionButaca::where('usuario_id', $user_id)
+            ->whereIn('estado', [1, 2])
+            ->with('funcion.pelicula')
+            ->get();
+
+        if ($historial->isEmpty()) {
+            return collect();
+        }
+
+        // Calcular género favorito
+        $generos = [];
+        $directores = [];
+
+        foreach ($historial as $registro) {
+            $pelicula = $registro->funcion->pelicula;
+            $generos[$pelicula->genero] = ($generos[$pelicula->genero] ?? 0) + 1;
+            $directores[] = $pelicula->director;
+        }
+        arsort($generos);
+        $generoFavorito = array_key_first($generos);
+
+        $directores = array_unique($directores);
+
+        // Calcular horario favorito
+        $horarios = ['mañana' => 0, 'tarde' => 0, 'noche' => 0];
+        foreach ($historial as $registro) {
+            $hora = Carbon::parse($registro->funcion->hora_inicio)->hour;
+            if ($hora >= 6 && $hora < 12) $horarios['mañana']++;
+            elseif ($hora >= 12 && $hora < 18) $horarios['tarde']++;
+            else $horarios['noche']++;
+        }
+        $horarioFavorito = array_keys($horarios, max($horarios))[0];
+
+        $hoy = Carbon::now()->toDateString();
+
+        // Obtener funciones activas que coinciden con género, director y horario
+        $funciones = Funcion::with(['pelicula', 'sala'])
+            ->where('fecha_inicio', '>=', $hoy)
+            ->whereHas('pelicula', function ($q) use ($generoFavorito, $directores) {
+                $q->where('genero', $generoFavorito)
+                  ->whereIn('director', $directores);
+            })
+            ->get();
+
+        $resultado = $funciones->filter(function ($funcion) use ($horarioFavorito) {
+            $hora = Carbon::parse($funcion->hora_inicio)->hour;
+            if ($horarioFavorito == 'mañana') return $hora >= 6 && $hora < 12;
+            if ($horarioFavorito == 'tarde') return $hora >= 12 && $hora < 18;
+            return $hora >= 18;
+        });
+
+        return $resultado->take($limite);
+    }
+///////
+public function mostrarCarteleraConRecomendaciones($user_id = null)
+    {
+        // Películas en tendencia siempre se muestran
+        $tendencia = $this->obtenerPeliculasEnTendencia(3);
+
+        // Si hay usuario, intentar obtener recomendaciones personales
+        $personal = collect();
+        if ($user_id) {
+            $historialExiste = FuncionButaca::where('usuario_id', $user_id)
+                ->whereIn('estado', [1, 2])
+                ->exists();
+
+            if ($historialExiste) {
+                $personal = $this->obtenerRecomendacionesPersonales($user_id, 6);
+            }
+        }
+
+        // Obtener todas las películas para mostrar cartelera normal (o lo que uses)
+        $peliculas = Pelicula::all();
+
+        return view('cartelera', [
+            'tendencia' => $tendencia,
+            'personal' => $personal,
+            'peliculas' => $peliculas,
+        ]);
+    }
+
+
+
 }
