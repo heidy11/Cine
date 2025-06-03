@@ -15,6 +15,7 @@
             <p><strong>🕒 Hora:</strong> {{ $funcion->hora_inicio }} - {{ $funcion->hora_fin }}</p>
             <p><strong>📅 Fecha:</strong> {{ $funcion->fecha_inicio }}</p>
             <p><strong>🎥 Formato:</strong> {{ $funcion->formato }}</p>
+            <p><strong>🎥 Director:</strong> {{ $funcion->pelicula->director }}</p>
         </div>
 
         {{-- Lista de butacas --}}

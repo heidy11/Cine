@@ -28,6 +28,7 @@ class PeliculaController extends Controller
         'genero' => 'required|string',
         'descripcion' => 'required|string',
         'imagen' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'director' => 'required|string|max:255',
     ]);
 
     // Guardar la imagen en public/imagenes
@@ -44,6 +45,7 @@ class PeliculaController extends Controller
         'genero' => $request->genero,
         'descripcion' => $request->descripcion,
         'imagen' => $nombreImagen,
+        'director' => $request->director,
     ]);
 
     return redirect()->route('peliculas.index')->with('success', 'Película creada correctamente.');
@@ -67,6 +69,7 @@ class PeliculaController extends Controller
         'titulo' => 'required',
         'duracion' => 'required|integer',
         'genero' => 'required',
+        'director' => 'required|string|max:255',
         'descripcion' => 'required|string',
         'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
     ]);

@@ -16,6 +16,8 @@ class Pelicula extends Model
         'descripcion',
         'duracion',
         'genero',
+        'imagen',
+        'director'
     ];
 
     // Una película puede tener muchas funciones
