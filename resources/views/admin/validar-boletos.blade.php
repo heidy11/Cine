@@ -14,7 +14,7 @@
 
         <div class="text-left text-gray-700 space-y-2">
             <p><strong>Película:</strong> {{ $boleto->funcion->pelicula->titulo }}</p>
-            <p><strong>Fecha de la función:</strong> {{ $boleto->funcion->fecha }}</p>
+            <p><strong>Fecha de la función:</strong> {{ $boleto->funcion->fecha_inicio }}</p>
             <p><strong>Hora:</strong> {{ substr($boleto->funcion->hora_inicio, 0, 5) }}</p>
             <p><strong>Sala:</strong> {{ $boleto->funcion->sala->nombre }}</p>
             <p><strong>Butaca:</strong> 
