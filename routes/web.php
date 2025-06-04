@@ -109,6 +109,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
 Route::post('/butaca/actualizar', [ButacaController::class, 'actualizarButaca'])->name('butaca.actualizar');
 });
 
-
+Route::get('/reservar/{funcion_id}', [FuncionButacaController::class, 'mostrarVistaReserva'])->name('reservar');
 
 });

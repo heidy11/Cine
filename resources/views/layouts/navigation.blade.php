@@ -33,7 +33,7 @@
                 📄 Comprobantes
             </a>
             <a href="{{ route('ventas.historial') }}" class="text-lg font-semibold tracking-wide text-white hover:text-yellow-400 transition-all duration-300">
-                📊 Historial de ventas
+                📊 ventas
             </a>
         </div>
     @endif
@@ -41,7 +41,7 @@
     <!-- Enlaces comunes -->
     <div class="flex flex-col md:flex-row gap-3 md:gap-6 w-full md:w-auto">
         <a href="{{ route('cartelera') }}" class="text-lg font-semibold tracking-wide text-white hover:text-yellow-400 transition-all duration-300">
-            🎞️ Ver Cartelera
+            🎞️ Cartelera
         </a>
         <a href="{{ route('mis-entradas') }}" class="text-lg font-semibold tracking-wide text-white hover:text-yellow-400 transition-all duration-300">
             🏷️ Mis Entradas

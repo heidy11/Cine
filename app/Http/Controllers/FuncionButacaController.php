@@ -194,9 +194,11 @@ public function misEntradas()
 
     $usuario_id = Auth::id();
 
-$misEntradas = FuncionButaca::with(['funcion.pelicula', 'funcion.sala', 'butaca'])
+    $misEntradas = FuncionButaca::with(['funcion.pelicula', 'funcion.sala', 'butaca'])
     ->where('usuario_id', $usuario_id)
+    ->orderByDesc('created_at') // Ordenar por fecha de compra más reciente
     ->get();
+
 
     //dd($misEntradas->all());
 
@@ -328,15 +330,15 @@ public function obtenerPeliculasEnTendencia($limite = 3)
             ->whereIn('estado', [1, 2])
             ->with('funcion.pelicula')
             ->get();
-
+    
         if ($historial->isEmpty()) {
             return collect();
         }
-
-        // Calcular género favorito
+    
+        // Obtener géneros y directores favoritos
         $generos = [];
         $directores = [];
-
+    
         foreach ($historial as $registro) {
             $pelicula = $registro->funcion->pelicula;
             $generos[$pelicula->genero] = ($generos[$pelicula->genero] ?? 0) + 1;
@@ -344,9 +346,8 @@ public function obtenerPeliculasEnTendencia($limite = 3)
         }
         arsort($generos);
         $generoFavorito = array_key_first($generos);
-
         $directores = array_unique($directores);
-
+    
         // Calcular horario favorito
         $horarios = ['mañana' => 0, 'tarde' => 0, 'noche' => 0];
         foreach ($historial as $registro) {
@@ -356,42 +357,49 @@ public function obtenerPeliculasEnTendencia($limite = 3)
             else $horarios['noche']++;
         }
         $horarioFavorito = array_keys($horarios, max($horarios))[0];
-
-        $hoy = Carbon::now()->toDateString();
-
-        // Obtener funciones activas que coinciden con género, director y horario
+    
+        $ahora = Carbon::now();
+    
+        // Consultar solo funciones futuras y que coincidan con criterios
         $funciones = Funcion::with(['pelicula', 'sala'])
-            ->where('fecha_inicio', '>=', $hoy)
+            ->where(function ($query) use ($ahora) {
+                $query->where('fecha_inicio', '>', $ahora->toDateString())
+                    ->orWhere(function ($q) use ($ahora) {
+                        $q->where('fecha_inicio', $ahora->toDateString())
+                          ->where('hora_inicio', '>=', $ahora->format('H:i:s'));
+                    });
+            })
             ->whereHas('pelicula', function ($q) use ($generoFavorito, $directores) {
                 $q->where('genero', $generoFavorito)
                   ->whereIn('director', $directores);
             })
             ->get();
-
+    
         $resultado = $funciones->filter(function ($funcion) use ($horarioFavorito) {
             $hora = Carbon::parse($funcion->hora_inicio)->hour;
             if ($horarioFavorito == 'mañana') return $hora >= 6 && $hora < 12;
             if ($horarioFavorito == 'tarde') return $hora >= 12 && $hora < 18;
             return $hora >= 18;
         });
-
-        return $resultado->take($limite);
+    
+        return $resultado->unique('id_funcion')->take($limite)->values();
     }
+    
 ///////
-public function mostrarCarteleraConRecomendaciones($user_id = null)
+public function mostrarCarteleraConRecomendaciones($usuario_id = null)
     {
         // Películas en tendencia siempre se muestran
         $tendencia = $this->obtenerPeliculasEnTendencia(3);
 
         // Si hay usuario, intentar obtener recomendaciones personales
         $personal = collect();
-        if ($user_id) {
-            $historialExiste = FuncionButaca::where('usuario_id', $user_id)
+        if ($usuario_id) {
+            $historialExiste = FuncionButaca::where('usuario_id', $usuario_id)
                 ->whereIn('estado', [1, 2])
                 ->exists();
 
             if ($historialExiste) {
-                $personal = $this->obtenerRecomendacionesPersonales($user_id, 6);
+                $personal = $this->obtenerRecomendacionesPersonales($usuario_id, 6);
             }
         }
 
