@@ -32,12 +32,12 @@
         <th class="py-4 px-6 text-center">Película</th>
         <th class="py-4 px-6 text-center">Sala</th>
         <th class="py-4 px-6 text-center">Fecha Inicio</th>
-        <th class="py-4 px-6 text-center">Fecha Fin</th>
+       
         <th class="py-4 px-6 text-center">Hora Inicio</th>
         <th class="py-4 px-6 text-center">Hora Fin</th>
         <th class="py-4 px-6 text-center">Formato</th>
         <th class="py-4 px-6 text-center">Precio</th>
-        <th class="py-4 px-6 text-center">Cartelera</th>
+        
         <th class="py-4 px-6 text-center">Acciones</th>
     </tr>
 </thead>
@@ -47,13 +47,13 @@
             <td class="px-6 py-4 text-[#220044] font-semibold">{{ $funcion->pelicula->titulo }}</td>
             <td class="px-6 py-4 text-[#220044]">{{ $funcion->sala->nombre }}</td>
             <td class="px-6 py-4 text-[#220044]">{{ \Carbon\Carbon::parse($funcion->fecha_inicio)->format('d/m/Y') }}</td>
-            <td class="px-6 py-4 text-[#220044]">{{ \Carbon\Carbon::parse($funcion->fecha_fin)->format('d/m/Y') }}</td>
+            
             <td class="px-6 py-4 text-[#220044]">{{ $funcion->hora_inicio }}</td>
 <td class="px-6 py-4 text-[#220044]">{{ $funcion->hora_fin }}</td>
 
             <td class="px-6 py-4 text-[#220044]">{{ $funcion->formato }}</td>
             <td class="px-6 py-4 text-[#220044]">Bs {{ number_format($funcion->precio, 2) }}</td>
-            <td class="px-6 py-4 text-[#220044]">{{ $funcion->duracion_cartelera }} días</td>
+            
             <td class="px-6 py-4">
                 <div class="flex justify-center space-x-3">
                     <a href="{{ route('funciones.edit', $funcion->id_funcion) }}" class="bg-yellow-400 hover:bg-yellow-300 text-[#220044] font-bold px-4 py-2 rounded-lg shadow-md transform hover:scale-105 transition">

@@ -147,6 +147,8 @@ public function verComprobantes()
         )
         ->where('funcion_butaca.estado', 1) // Pendientes
         ->whereNotNull('funcion_butaca.comprobante')
+        ->orderByDesc('funciones.fecha_inicio') // Ordenar por fecha de función de forma descendente
+        ->orderByDesc('funciones.hora_inicio') // Ordenar por hora de función de forma descendente
         ->get();
         //dd($comprobantes->all());
     return view('admin.comprobantes', compact('comprobantes'));

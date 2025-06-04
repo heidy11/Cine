@@ -16,13 +16,14 @@ use Illuminate\Support\Facades\DB;
 class FuncionController extends Controller
 {
     public function index()
-    {
-        $funciones = Funcion::with(['pelicula', 'sala'])
-            ->orderBy('id_funcion', 'asc')
-            ->get();
+{
+    $funciones = Funcion::with(['pelicula', 'sala'])
+        ->orderByDesc('fecha_inicio') // Ordenar por fecha de la función de forma descendente
+        ->orderByDesc('hora_inicio') // Ordenar por hora de la función de forma descendente
+        ->get();
 
-        return view('funciones.index', compact('funciones'));
-    }
+    return view('funciones.index', compact('funciones'));
+}
 
     public function create(Request $request)
     {
