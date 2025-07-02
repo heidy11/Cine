@@ -10,7 +10,7 @@
                             $color = $butaca->estado == 0 ? 'bg-gray-500' : 'bg-blue-400';
                         @endphp
                         <div
-                            class="butaca w-12 h-12 rounded text-white font-bold flex items-center justify-center cursor-pointer {{ $color }}"
+                            class="butaca w-12 sm:w-10 h-12 sm:h-10 rounded text-white font-bold flex items-center justify-center cursor-pointer {{ $color }}"
                             data-id="{{ $butaca->id_butaca }}"
                             data-numero="{{ $butaca->numero }}"
                             data-estado="{{ $butaca->estado }}"
@@ -24,7 +24,8 @@
 
         <!-- Modal -->
         <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center">
-            <div class="bg-white rounded p-6 space-y-4 w-96">
+            <div class="bg-white rounded p-6 space-y-4 w-11/12 max-w-md">
+
                 <h2 class="text-xl font-bold text-center">Editar Butaca</h2>
                 <form id="form-editar">
                     @csrf

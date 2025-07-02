@@ -110,5 +110,6 @@ Route::post('/butaca/actualizar', [ButacaController::class, 'actualizarButaca'])
 });
 
 Route::get('/reservar/{funcion_id}', [FuncionButacaController::class, 'mostrarVistaReserva'])->name('reservar');
+Route::get('/boletos/imprimir/{uuid}', [App\Http\Controllers\FuncionButacaController::class, 'imprimirBoleto'])->name('boletos.imprimir');
 
 });

@@ -78,90 +78,88 @@
                 </div>
             @endif
 
-            @if($tendencia->isNotEmpty())
-<section class="mb-16">
-    <h2 class="text-yellow-400 text-4xl font-extrabold mb-8 text-center">Películas en tendencia</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-        @foreach($tendencia as $pelicula)
-        <div class="bg-gray-800 text-yellow-300 p-4 rounded-lg shadow-md flex flex-col justify-between">
-            <div>
-                <h3 class="font-bold text-xl mb-2">{{ $pelicula->titulo }}</h3>
-                <p><strong>Género:</strong> {{ $pelicula->genero }}</p>
-                <p><strong>Director:</strong> {{ $pelicula->director }}</p>
-            </div>
-            <a href="{{ route('pelicula.horarios', $pelicula->id_pelicula) }}" class="bg-yellow-400 text-[#220044] font-bold py-2 px-4 rounded hover:bg-yellow-500 transition">
-                🎥 Ver horarios
-            </a>
-        </div>
-        @endforeach
-    </div>
-</section>
-@endif
-
-            @if($personal->isNotEmpty())
-<section class="mb-16">
+            <!-- Recomendaciones personales -->
+            <section class="mb-16 mt-20">
     <h2 class="text-yellow-400 text-4xl font-extrabold mb-8 text-center">Recomendaciones para ti</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-@foreach($personal as $funcion)
-    <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
-        
-        <div class="p-4">
-            <h3 class="text-yellow-400 font-bold text-xl mb-2 truncate">{{ $funcion->pelicula->titulo }}</h3>
-            <div class="flex flex-wrap gap-2 mb-3">
-                <span class="bg-yellow-600 text-black text-xs font-semibold px-2 py-1 rounded">{{ $funcion->pelicula->genero }}</span>
-                <span class="bg-yellow-600 text-black text-xs font-semibold px-2 py-1 rounded">{{ $funcion->pelicula->director }}</span>
-            </div>
-            <p class="text-gray-300 text-sm mb-4">
-                Próximo horario: {{ \Carbon\Carbon::parse($funcion->fecha_inicio . ' ' . $funcion->hora_inicio)->format('d/m/Y H:i') }}
-            </p>
-            
+    @if($personal->isNotEmpty())
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            @foreach($personal as $funcion)
+                <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                    <div class="p-4">
+                        <h3 class="text-yellow-400 font-bold text-xl mb-2 truncate">{{ $pelicula->titulo }}</h3>
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            <span class="bg-yellow-600 text-black text-xs font-semibold px-2 py-1 rounded">
+    {{ $pelicula->genero }}
+</span>
+
+                        </div>
+                        <p class="text-gray-300 text-sm mb-4">
+                            Fecha: {{ \Carbon\Carbon::parse($funcion->fecha_inicio)->format('d/m/Y') }} <br>
+                            Horario: {{ \Carbon\Carbon::parse($funcion->hora_inicio)->format('H:i') }}
+                        </p>
+                        <a href="{{ route('pelicula.horarios', $pelicula->id_pelicula) }}"
+                            class="bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-[#220044] font-bold py-2 px-4 rounded shadow transition">
+                            🎥 Ver horarios
+                        </a>
+                    </div>
+                </div>
+            @endforeach
         </div>
-    </div>
-@endforeach
-</div>
+    @else
+        <p class="text-center text-gray-300 text-lg font-semibold">No hay recomendaciones personalizadas por el momento.</p>
+    @endif
 </section>
-@endif
 
+<section class="mb-16 mt-20">
+    <h2 class="text-yellow-400 text-4xl font-extrabold mb-8 text-center">🎟️ Las 20 entradas más vendidas</h2>
+    @if($populares->isNotEmpty())
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-12">
+            @foreach($populares as $funcion)
+                <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                    <div class="p-4">
+                        <h3 class="text-yellow-400 font-bold text-xl mb-2 truncate">
+                            {{ optional($funcion->pelicula)->titulo }}
+                        </h3>
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            <span class="bg-yellow-600 text-black text-xs font-semibold px-2 py-1 rounded">
+                                {{ optional($funcion->pelicula)->genero }}
+                            </span>
+                        </div>
+                        <p class="text-gray-300 text-sm mb-4">
+                            Vendidas: {{ $funcion->butacas_confirmadas_count }} entradas <br>
+                            
+                        </p>
+                        <a href="{{ route('pelicula.horarios', $funcion->pelicula->id_pelicula) }}"
+                           class="bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-[#220044] font-bold py-2 px-4 rounded shadow transition">
+                            🎟️ Ver horarios
+                        </a>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @else
+        <p class="text-center text-gray-300 text-lg font-semibold">Aún no hay entradas vendidas para mostrar.</p>
+    @endif
+</section>
 
 
         </div>
-       
     </div>
 
-    <!-- Estilos extra -->
     <style>
-        .perspective {
-            perspective: 1000px;
-        }
-        .card-inner {
-            transition: transform 0.7s;
-            transform-style: preserve-3d;
-            position: relative;
-        }
-        .group:hover .card-inner {
-            transform: rotateY(180deg);
-        }
+        .perspective { perspective: 1000px; }
+        .card-inner { transition: transform 0.7s; transform-style: preserve-3d; position: relative; }
+        .group:hover .card-inner { transform: rotateY(180deg); }
         .card-front, .card-back {
             backface-visibility: hidden;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
         }
-        .card-back {
-            transform: rotateY(180deg);
-        }
-        /* Animaciones FadeIn */
+        .card-back { transform: rotateY(180deg); }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px);}
             to { opacity: 1; transform: translateY(0);}
         }
-        .animate-fade-in {
-            animation: fadeIn 1s ease-out;
-        }
-        .animate-fade-in-up {
-            animation: fadeIn 1.2s ease-out;
-        }
+        .animate-fade-in { animation: fadeIn 1s ease-out; }
+        .animate-fade-in-up { animation: fadeIn 1.2s ease-out; }
     </style>
 </x-app-layout>

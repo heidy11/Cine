@@ -217,30 +217,87 @@ public function destroy(Funcion $funcion)
 
     
     public function cartelera()
-    {
-        $usuario_id = Auth::id();
-    
-        $personal = collect();
+{
+    $usuario_id = auth()->id();
+    $personal = collect();
 
     if ($usuario_id) {
-        $historialExiste = FuncionButaca::where('usuario_id', $usuario_id)
-            ->whereIn('estado', [1, 2])
-            ->exists();
+        $reco = \App\Models\Recomendacion::where('usuario_id', $usuario_id)->first();
 
-        if ($historialExiste) {
-            $personal = (new FuncionButacaController)->obtenerRecomendacionesPersonales($usuario_id);
+        if ($reco) {
+            $generos = [
+                'accion', 'comedia', 'drama', 'terror', 'animacion',
+                'fantasia', 'ciencia_ficcion', 'romance', 'documental'
+            ];
+            $maxGenero = null;
+            $maxGeneroValor = 0;
+            foreach ($generos as $g) {
+                if ($reco->$g > $maxGeneroValor) {
+                    $maxGeneroValor = $reco->$g;
+                    $maxGenero = $g;
+                }
+            }
+
+            $turnos = ['manana', 'tarde', 'noche'];
+            $maxTurno = null;
+            $maxTurnoValor = 0;
+            foreach ($turnos as $t) {
+                if ($reco->$t > $maxTurnoValor) {
+                    $maxTurnoValor = $reco->$t;
+                    $maxTurno = $t;
+                }
+            }
+
+            $ahora = now();
+
+            $personal = Funcion::with('pelicula')
+                ->where(function ($query) use ($ahora) {
+                    $query->where('fecha_inicio', '>', $ahora->toDateString())
+                        ->orWhere(function ($q) use ($ahora) {
+                            $q->where('fecha_inicio', $ahora->toDateString())
+                                ->where('hora_inicio', '>=', $ahora->format('H:i:s'));
+                        });
+                })
+                ->whereHas('pelicula', function ($q) use ($maxGenero) {
+                    $q->whereRaw('LOWER(REPLACE(genero, " ", "_")) = ?', [$maxGenero]);
+                })
+                ->get()
+                ->filter(function ($funcion) use ($maxTurno) {
+                    $hora = Carbon::parse($funcion->hora_inicio)->hour;
+                    if ($maxTurno == 'manana') return $hora >= 6 && $hora < 12;
+                    if ($maxTurno == 'tarde') return $hora >= 12 && $hora < 18;
+                    return $hora >= 18;
+                })
+                ->pluck('pelicula')
+                ->unique('id_pelicula')
+                ->values();
         }
     }
 
-    // Obtener películas de funciones activas: fecha/hora >= ahora
-    $ahora = Carbon::now();
+    // populares (20 más vendidas)
+    $ahora = now();
+    $populares = Funcion::with('pelicula')
+        ->withCount(['butacasConfirmadas' => function($q) {
+            $q->where('estado', 2);
+        }])
+        ->where(function ($query) use ($ahora) {
+            $query->where('fecha_inicio', '>', $ahora->toDateString())
+                ->orWhere(function ($q) use ($ahora) {
+                    $q->where('fecha_inicio', $ahora->toDateString())
+                        ->where('hora_inicio', '>=', $ahora->format('H:i:s'));
+                });
+        })
+        ->orderBy('butacas_confirmadas_count', 'desc')
+        ->limit(20)
+        ->get();
 
+    // funciones activas generales
     $peliculas = Funcion::with('pelicula')
         ->where(function ($query) use ($ahora) {
             $query->where('fecha_inicio', '>', $ahora->toDateString())
                 ->orWhere(function ($q) use ($ahora) {
                     $q->where('fecha_inicio', $ahora->toDateString())
-                      ->where('hora_inicio', '>=', $ahora->format('H:i:s'));
+                        ->where('hora_inicio', '>=', $ahora->format('H:i:s'));
                 });
         })
         ->get()
@@ -248,10 +305,10 @@ public function destroy(Funcion $funcion)
         ->unique('id_pelicula')
         ->values();
 
-    $tendencia = (new FuncionButacaController)->obtenerPeliculasEnTendencia();
-
-    return view('cartelera', compact('peliculas', 'personal', 'tendencia'));
+    return view('cartelera', compact('peliculas', 'personal', 'populares'));
 }
+
+
     
     
     
@@ -278,15 +335,16 @@ public function destroy(Funcion $funcion)
 
     public function verHorarios(Pelicula $pelicula)
     {
-        $hoy = Carbon::now('America/La_Paz')->toDateString();
+       $ahora = Carbon::now('America/La_Paz')->format('Y-m-d H:i:s');
 
-        $funciones = Funcion::with('sala')
-        ->where('pelicula_id', $pelicula->id_pelicula)
-        ->where('fecha_inicio', '>=', $hoy)
-        ->orderBy('fecha_inicio')
-        ->orderBy('hora_inicio')
-        ->get()
-        ->groupBy('fecha_inicio');
+$funciones = Funcion::with('sala')
+    ->where('pelicula_id', $pelicula->id_pelicula)
+    ->whereRaw("CONCAT(fecha_inicio, ' ', hora_inicio) >= ?", [$ahora])
+    ->orderBy('fecha_inicio')
+    ->orderBy('hora_inicio')
+    ->get()
+    ->groupBy('fecha_inicio');
+
     
     
         return view('peliculas.horarios', compact('pelicula', 'funciones'));

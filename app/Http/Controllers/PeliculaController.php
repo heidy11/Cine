@@ -11,7 +11,8 @@ class PeliculaController extends Controller
 {
     public function index()
     {
-        $peliculas = Pelicula::all();
+        
+    $peliculas = Pelicula::orderBy('id_pelicula', 'asc')->get();
         return view('peliculas.index', compact('peliculas'));
     }
 
@@ -20,36 +21,27 @@ class PeliculaController extends Controller
         return view('peliculas.create');
     }
 
-    public function store(Request $request)
+public function store(Request $request)
 {
-    $request->validate([
-        'titulo' => 'required|string|max:255',
-        'duracion' => 'required|integer',
-        'genero' => 'required|string',
-        'descripcion' => 'required|string',
-        'imagen' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        'director' => 'required|string|max:255',
-    ]);
+    $pelicula = new Pelicula();
+    $pelicula->titulo = $request->titulo;
+    $pelicula->descripcion = $request->descripcion;
+    $pelicula->duracion = $request->duracion;
+    $pelicula->genero = $request->genero;
+    $pelicula->director = $request->director;
 
-    // Guardar la imagen en public/imagenes
-    $nombreImagen = null;
     if ($request->hasFile('imagen')) {
-        $archivo = $request->file('imagen');
-        $nombreImagen = time().'_'.$archivo->getClientOriginalName();
-        $archivo->move(public_path('imagenes'), $nombreImagen);
+        $file = $request->file('imagen');
+        $nombreArchivo = time().'_'.$file->getClientOriginalName();
+        $file->move(public_path('imagenes'), $nombreArchivo);  // SIEMPRE la guarda en public/imagenes
+        $pelicula->imagen = 'imagenes/' . $nombreArchivo;     // se guarda en BD esta ruta pública
     }
 
-    Pelicula::create([
-        'titulo' => $request->titulo,
-        'duracion' => $request->duracion,
-        'genero' => $request->genero,
-        'descripcion' => $request->descripcion,
-        'imagen' => $nombreImagen,
-        'director' => $request->director,
-    ]);
+    $pelicula->save();
 
-    return redirect()->route('peliculas.index')->with('success', 'Película creada correctamente.');
+    return redirect()->route('peliculas.index')->with('success', 'Película creada exitosamente.');
 }
+
 
 
     public function show(Pelicula $pelicula)
@@ -57,6 +49,7 @@ class PeliculaController extends Controller
         return view('peliculas.show', compact('pelicula'));
     }
 
+    
     public function edit(Pelicula $pelicula)
     {
         return view('peliculas.edit', compact('pelicula'));

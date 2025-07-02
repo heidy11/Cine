@@ -46,6 +46,11 @@ class Funcion extends Model
     }
 
     // Una función puede tener muchas butacas
-    
+    public function butacasConfirmadas()
+{
+    return $this->hasMany(\App\Models\FuncionButaca::class, 'funcion_id')
+                ->where('estado', 2);
+}
+
     
 }

@@ -26,7 +26,7 @@
                     <tr>
                         <th class="py-4 px-6 text-center">Título</th>
                         <th class="py-4 px-6 text-center">Género</th>
-                        <th class="py-4 px-6 text-center">Director</th>
+                        
                         <th class="py-4 px-6 text-center">Duración</th>
                         <th class="py-4 px-6 text-center">Descripción</th>
                         <th class="py-4 px-6 text-center">Acciones</th>
@@ -37,7 +37,7 @@
                         <tr class="border-b hover:bg-gray-100 text-center">
                             <td class="px-6 py-4 text-[#220044] font-semibold">{{ $pelicula->titulo }}</td>
                             <td class="px-6 py-4 text-[#220044]">{{ $pelicula->genero }}</td>
-                            <td class="px-6 py-4 text-[#220044]">{{ $pelicula->director }}</td>
+                            
                             <td class="px-6 py-4 text-[#220044]">{{ $pelicula->duracion }} min</td>
                             <td class="px-6 py-4 text-[#220044]">{{ Str::limit($pelicula->descripcion, 50) }}</td>
                             <td class="px-6 py-4">

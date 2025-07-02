@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Models\Pelicula;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 class FuncionButacaController extends Controller
 {
@@ -70,6 +71,7 @@ class FuncionButacaController extends Controller
     ]);
 
     $funcion_id = $request->funcion_id;
+
     $butaca_ids = array_map('intval', $request->butacas);
 
     // Guardar el comprobante en almacenamiento público
@@ -79,6 +81,8 @@ class FuncionButacaController extends Controller
     $usuario_id = Auth::id(); // Esto funcionará si configuraste el modelo Usuario en config/auth.php
 
     foreach ($butaca_ids as $butaca_id) {
+        Log::info('LLAMANDO registrarRecomendacion para usuario: ' . $usuario_id);
+
         $registro = FuncionButaca::where('funcion_id', $funcion_id)
                     ->where('butaca_id', $butaca_id)
                     ->first();
@@ -98,6 +102,17 @@ class FuncionButacaController extends Controller
                 'comprobante' => $comprobantePath,
             ]);
         }
+         
+    $funcion = Funcion::find($funcion_id);
+    $horaInicio = $funcion->hora_inicio;
+
+    // llamamos el recomendador
+    $recomendador = new \App\Http\Controllers\RecomendacionController();
+    $recomendador->registrarRecomendacion(
+        $usuario_id,
+        $funcion->pelicula_id,
+        $horaInicio
+    );
     }
      
 
@@ -233,18 +248,6 @@ public function rechazarComprobante($id)
     return back()->with('error', '❌ Comprobante rechazado y butaca liberada.');
 }
 
-public function verBoleto($uuid)
-{
-    $boleto = FuncionButaca::with('funcion.pelicula', 'funcion.sala')->findOrFail($uuid);
-
-    // URL que irá dentro del QR para que el admin lo escanee
-    $urlValidacion = route('admin.validar.boleto', $uuid);
-
-    // Generar el QR con esa URL
-    $qr = QrCode::size(250)->generate($urlValidacion);
-
-    return view('boletos.ver', compact('boleto', 'qr'));
-}
 
 public function validarBoleto($uuid)
 {
@@ -306,114 +309,143 @@ public function ingresosHoy(Request $request)
 
     return view('admin.ingresos-hoy', compact('ventas', 'fecha', 'total', 'resumenAnteriores'));
 }
-public function obtenerPeliculasEnTendencia($limite = 3)
-    {
-        $hoy = Carbon::now()->toDateString();
+//public function obtenerPeliculasEnTendencia($limite = 3)
+//    {
+//        $hoy = Carbon::now()->toDateString();
+//
+//        
+//        return DB::table('funciones')
+//        ->join('funcion_butaca', 'funciones.id_funcion', '=', 'funcion_butaca.funcion_id')
+//        ->join('peliculas', 'funciones.pelicula_id', '=', 'peliculas.id_pelicula')
+//        ->where('funciones.fecha_inicio', '>=', now()->toDateString())
+//        ->whereIn('funcion_butaca.estado', [1, 2])
+//        ->select('peliculas.id_pelicula', 'peliculas.titulo', 'peliculas.genero', 'peliculas.director',
+//        DB::raw('COUNT(funcion_butaca.id_funcion_butaca) as total_ventas'))
+//        ->groupBy('peliculas.id_pelicula', 'peliculas.titulo', 'peliculas.genero', 'peliculas.director')
+//        ->orderByDesc('total_ventas')
+//        ->limit(3)
+//        ->get();
+//
+//        
+//    }
+//
+//    //////
+//    public function obtenerRecomendacionesPersonales($user_id, $limite = 6)
+//    {
+//        $historial = FuncionButaca::where('usuario_id', $user_id)
+//            ->whereIn('estado', [1, 2])
+//            ->with('funcion.pelicula')
+//            ->get();
+//    
+//        if ($historial->isEmpty()) {
+//            return collect();
+//        }
+//    
+//        $generos = [];
+//        $directores = [];
+//    
+//        foreach ($historial as $registro) {
+//            $pelicula = $registro->funcion->pelicula;
+//            $generos[$pelicula->genero] = ($generos[$pelicula->genero] ?? 0) + 1;
+//            $directores[] = $pelicula->director;
+//        }
+//        arsort($generos);
+//        $generoFavorito = array_key_first($generos);
+//        $directores = array_unique($directores);
+//    
+//        
+//        $horarios = ['mañana' => 0, 'tarde' => 0, 'noche' => 0];
+//        foreach ($historial as $registro) {
+//            $hora = Carbon::parse($registro->funcion->hora_inicio)->hour;
+//            if ($hora >= 6 && $hora < 12) $horarios['mañana']++;
+//            elseif ($hora >= 12 && $hora < 18) $horarios['tarde']++;
+//            else $horarios['noche']++;
+//        }
+//        $horarioFavorito = array_keys($horarios, max($horarios))[0];
+//    
+//        $ahora = Carbon::now();
+//        $funciones = Funcion::with(['pelicula', 'sala'])
+//            ->where(function ($query) use ($ahora) {
+//                $query->where('fecha_inicio', '>', $ahora->toDateString())
+//                    ->orWhere(function ($q) use ($ahora) {
+//                        $q->where('fecha_inicio', $ahora->toDateString())
+//                          ->where('hora_inicio', '>=', $ahora->format('H:i:s'));
+//                    });
+//            })
+//            ->whereHas('pelicula', function ($q) use ($generoFavorito, $directores) {
+//                $q->where('genero', $generoFavorito)
+//                  ->whereIn('director', $directores);
+//            })
+//            ->get();
+//    
+//        $resultado = $funciones->filter(function ($funcion) use ($horarioFavorito) {
+//            $hora = Carbon::parse($funcion->hora_inicio)->hour;
+//            if ($horarioFavorito == 'mañana') return $hora >= 6 && $hora < 12;
+//            if ($horarioFavorito == 'tarde') return $hora >= 12 && $hora < 18;
+//            return $hora >= 18;
+//        });
+//    
+//        return $resultado->unique('id_funcion')->take($limite)->values();
+//    }
+//    
+/////////
+//public function mostrarCarteleraConRecomendaciones($usuario_id = null)
+//    {
+//        
+//        $tendencia = $this->obtenerPeliculasEnTendencia(3);
+//
+//        $personal = collect();
+//        if ($usuario_id) {
+//            $historialExiste = FuncionButaca::where('usuario_id', $usuario_id)
+//                ->whereIn('estado', [1, 2])
+//                ->exists();
+//
+//            if ($historialExiste) {
+//                $personal = $this->obtenerRecomendacionesPersonales($usuario_id, 6);
+//            }
+//        }
+//        $peliculas = Pelicula::all();
+//
+//        return view('cartelera', [
+//            'tendencia' => $tendencia,
+//            'personal' => $personal,
+//            'peliculas' => $peliculas,
+//        ]);
+//    }
 
-        // Obtener ids de películas en funciones activas y sus ventas
-        return DB::table('funciones')
-        ->join('funcion_butaca', 'funciones.id_funcion', '=', 'funcion_butaca.funcion_id')
-        ->join('peliculas', 'funciones.pelicula_id', '=', 'peliculas.id_pelicula')
-        ->where('funciones.fecha_inicio', '>=', now()->toDateString())
-        ->whereIn('funcion_butaca.estado', [1, 2])
-        ->select('peliculas.id_pelicula', 'peliculas.titulo', 'peliculas.genero', 'peliculas.director', DB::raw('COUNT(funcion_butaca.id_funcion_butaca) as total_ventas'))
-        ->groupBy('peliculas.id_pelicula', 'peliculas.titulo', 'peliculas.genero', 'peliculas.director')
-        ->orderByDesc('total_ventas')
-        ->limit(3)
-        ->get();
+public function butacasConfirmadas()
+{
+    return $this->hasMany(\App\Models\FuncionButaca::class, 'funcion_id')
+                ->where('estado', 2);
+}
 
-        
+public function verBoleto($uuid)
+{
+    $boleto = FuncionButaca::with(['funcion.pelicula', 'funcion.sala', 'butaca'])
+        ->findOrFail($uuid);
+
+    // Confirmar automáticamente si estaba reservado (estado 1)
+    if ($boleto->estado == 1) {
+        $boleto->estado = 2;
+        $boleto->save();
     }
 
-    //////
-    public function obtenerRecomendacionesPersonales($user_id, $limite = 6)
-    {
-        $historial = FuncionButaca::where('usuario_id', $user_id)
-            ->whereIn('estado', [1, 2])
-            ->with('funcion.pelicula')
-            ->get();
-    
-        if ($historial->isEmpty()) {
-            return collect();
-        }
-    
-        // Obtener géneros y directores favoritos
-        $generos = [];
-        $directores = [];
-    
-        foreach ($historial as $registro) {
-            $pelicula = $registro->funcion->pelicula;
-            $generos[$pelicula->genero] = ($generos[$pelicula->genero] ?? 0) + 1;
-            $directores[] = $pelicula->director;
-        }
-        arsort($generos);
-        $generoFavorito = array_key_first($generos);
-        $directores = array_unique($directores);
-    
-        // Calcular horario favorito
-        $horarios = ['mañana' => 0, 'tarde' => 0, 'noche' => 0];
-        foreach ($historial as $registro) {
-            $hora = Carbon::parse($registro->funcion->hora_inicio)->hour;
-            if ($hora >= 6 && $hora < 12) $horarios['mañana']++;
-            elseif ($hora >= 12 && $hora < 18) $horarios['tarde']++;
-            else $horarios['noche']++;
-        }
-        $horarioFavorito = array_keys($horarios, max($horarios))[0];
-    
-        $ahora = Carbon::now();
-    
-        // Consultar solo funciones futuras y que coincidan con criterios
-        $funciones = Funcion::with(['pelicula', 'sala'])
-            ->where(function ($query) use ($ahora) {
-                $query->where('fecha_inicio', '>', $ahora->toDateString())
-                    ->orWhere(function ($q) use ($ahora) {
-                        $q->where('fecha_inicio', $ahora->toDateString())
-                          ->where('hora_inicio', '>=', $ahora->format('H:i:s'));
-                    });
-            })
-            ->whereHas('pelicula', function ($q) use ($generoFavorito, $directores) {
-                $q->where('genero', $generoFavorito)
-                  ->whereIn('director', $directores);
-            })
-            ->get();
-    
-        $resultado = $funciones->filter(function ($funcion) use ($horarioFavorito) {
-            $hora = Carbon::parse($funcion->hora_inicio)->hour;
-            if ($horarioFavorito == 'mañana') return $hora >= 6 && $hora < 12;
-            if ($horarioFavorito == 'tarde') return $hora >= 12 && $hora < 18;
-            return $hora >= 18;
-        });
-    
-        return $resultado->unique('id_funcion')->take($limite)->values();
-    }
-    
-///////
-public function mostrarCarteleraConRecomendaciones($usuario_id = null)
-    {
-        // Películas en tendencia siempre se muestran
-        $tendencia = $this->obtenerPeliculasEnTendencia(3);
+    // QR con la URL de validación
+    $urlValidacion = route('admin.validar.boleto', $uuid);
+    $qr = \QrCode::size(250)->generate($urlValidacion);
 
-        // Si hay usuario, intentar obtener recomendaciones personales
-        $personal = collect();
-        if ($usuario_id) {
-            $historialExiste = FuncionButaca::where('usuario_id', $usuario_id)
-                ->whereIn('estado', [1, 2])
-                ->exists();
+    return view('boletos.ver', compact('boleto', 'qr'));
+}
 
-            if ($historialExiste) {
-                $personal = $this->obtenerRecomendacionesPersonales($usuario_id, 6);
-            }
-        }
+public function imprimirBoleto($uuid)
+{
+    $boleto = FuncionButaca::with(['funcion.pelicula', 'funcion.sala', 'butaca'])->findOrFail($uuid);
 
-        // Obtener todas las películas para mostrar cartelera normal (o lo que uses)
-        $peliculas = Pelicula::all();
+    $urlValidacion = route('admin.validar.boleto', $uuid);
+    $qr = \QrCode::size(250)->generate($urlValidacion);
 
-        return view('cartelera', [
-            'tendencia' => $tendencia,
-            'personal' => $personal,
-            'peliculas' => $peliculas,
-        ]);
-    }
+    return view('boletos.impresion', compact('boleto', 'qr'));
+}
 
 
 

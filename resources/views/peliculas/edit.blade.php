@@ -32,11 +32,7 @@
                 </div>
 
 
-                <div>
-                    <label class="block text-[#220044] font-semibold mb-2">Director</label>
-                    <input type="text" name="director" id="director" value="{{ old('director', $pelicula->director) }}" required
-                        class="border border-gray-300 rounded-lg px-4 py-3 w-full focus:ring-2 focus:ring-yellow-400 focus:border-yellow-500">
-                </div>
+                
 
                 <!-- Género -->
                 <div>

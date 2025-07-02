@@ -19,45 +19,64 @@
 
                         </tr>
                     </thead>
-                    <tbody>
-                        @foreach($misEntradas as $entrada)
-                            <tr>
-                                <td class="border px-4 py-2">{{ $entrada->funcion->pelicula->titulo }}</td>
-                                <td class="border px-4 py-2">{{ $entrada->funcion->sala->nombre }}</td>
-                                <td class="border px-4 py-2">{{ $entrada->funcion->fecha_inicio }}</td>
-                                <td class="border px-4 py-2">{{ substr($entrada->funcion->hora_inicio, 0, 5) }}</td>
-                                <td class="border px-4 py-2">{{ $entrada->butaca->numero}}</td>
-                                <td class="border px-4 py-2">
-                                    @if($entrada->estado == 2)
-                                        @if($entrada->usado == 1)
-                                            <span class="text-gray-500 font-semibold">🎟️ Usado</span>
-                                        @else
-                                            <span class="text-green-600 font-semibold">✅ Confirmado</span>
-                                        @endif
-                                    @elseif($entrada->estado == 1)
-                                        <span class="text-yellow-500 font-semibold">⏳ Pendiente</span>
-                                    @else
-                                        <span class="text-gray-500 italic">Sin estado</span>
-                                    @endif
-                                </td>
-                                <td class="border px-4 py-2 text-center">
-                                   
-                                     @if($entrada->estado == 2 && $entrada->usado == 0)
-                                         <a href="{{ route('usuario.boleto.ver', $entrada->id_funcion_butaca) }}"
-                                            class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-semibold text-sm py-1 px-3 rounded shadow transition">
-                                             📲 Ver entrada
-                                         </a>
+                   <tbody>
+    @foreach($misEntradas as $entrada)
+        <tr>
+            {{-- Película --}}
+            <td class="border px-4 py-2">
+                {{ optional(optional($entrada->funcion)->pelicula)->titulo ?? 'Sin película' }}
+            </td>
+            
+            {{-- Sala --}}
+            <td class="border px-4 py-2">
+                {{ optional(optional($entrada->funcion)->sala)->nombre ?? 'Sin sala' }}
+            </td>
+            
+            {{-- Fecha --}}
+            <td class="border px-4 py-2">
+                {{ optional($entrada->funcion)->fecha_inicio ?? 'Sin fecha' }}
+            </td>
+            
+            {{-- Hora --}}
+            <td class="border px-4 py-2">
+                {{ optional($entrada->funcion)->hora_inicio ?? 'Sin hora' }}
+            </td>
+            
+            {{-- Butaca --}}
+            <td class="border px-4 py-2">
+                {{ optional($entrada->butaca)->numero ?? 'Sin butaca' }}
+            </td>
+            
+            {{-- Estado --}}
+            <td class="border px-4 py-2">
+                @if($entrada->estado == 2)
+                    @if($entrada->usado == 1)
+                        <span class="text-gray-500 font-semibold">🎟️ Usado</span>
+                    @else
+                        <span class="text-green-600 font-semibold">✅ Confirmado</span>
+                    @endif
+                @elseif($entrada->estado == 1)
+                    <span class="text-yellow-500 font-semibold">⏳ Pendiente</span>
+                @else
+                    <span class="text-gray-500 italic">Sin estado</span>
+                @endif
+            </td>
+            
+            {{-- Entrada --}}
+            <td class="border px-4 py-2 text-center">
+                @if($entrada->estado == 2 && $entrada->usado == 0)
+                    <a href="{{ route('usuario.boleto.ver', $entrada->id_funcion_butaca) }}"
+                        class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-semibold text-sm py-1 px-3 rounded shadow transition">
+                        📲 Ver entrada
+                    </a>
+                @else
+                    <span class="text-gray-400 italic text-sm">No disponible</span>
+                @endif
+            </td>
+        </tr>
+    @endforeach
+</tbody>
 
-                                     @else
-                                         <span class="text-gray-400 italic text-sm">No disponible</span>
-                                     @endif
-                                </td>
-
-                            </tr>
-
-                        @endforeach
-
-                    </tbody>
                 </table>
             </div>
         @endif
