@@ -14,7 +14,6 @@ class AuthenticatedSessionController extends Controller
     {
         return view('auth.login');
     }
-
     // Manejar el proceso de login
     public function store(Request $request)
 {
@@ -29,7 +28,6 @@ class AuthenticatedSessionController extends Controller
     ], [
         'correo.regex' => 'Solo se permiten correos @gmail.com',
     ]);
-
     // Buscar al usuario en la base de datos
     $usuario = DB::table('usuarios')->where('correo', $request->correo)->first();
 
@@ -41,7 +39,6 @@ class AuthenticatedSessionController extends Controller
     if (!Hash::check($request->contrasena, $usuario->contrasena)) {
         return back()->withErrors(['contrasena' => 'La contraseña es incorrecta.']);
     }
-
     // Iniciar sesión manualmente
     Auth::loginUsingId($usuario->id_usuario);
 
@@ -49,10 +46,8 @@ class AuthenticatedSessionController extends Controller
     $request->session()->put('usuario_id', $usuario->id_usuario);
     $request->session()->put('usuario_nombre', $usuario->nombre);
     $request->session()->put('usuario_rol', $usuario->rol_id); // Guardar el rol
-
     // Regenerar la sesión
     $request->session()->regenerate();
-
     //direccion segun usuarios
     if($usuario->rol_id == 1){
         return redirect('/dashboard');
@@ -60,8 +55,6 @@ class AuthenticatedSessionController extends Controller
         return redirect('/cartelera');
     }
 }
-
-
     // Manejar el logout
     public function destroy(Request $request)
     {

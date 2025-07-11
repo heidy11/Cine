@@ -71,53 +71,54 @@ class FuncionButacaController extends Controller
     ]);
 
     $funcion_id = $request->funcion_id;
-
     $butaca_ids = array_map('intval', $request->butacas);
 
-    // Guardar el comprobante en almacenamiento público
-    $comprobantePath = $request->file('comprobante')->store('comprobantes', 'public');
+    $usuario_id = Auth::id();
 
-    // Obtener ID del usuario autenticado correctamente
-    $usuario_id = Auth::id(); // Esto funcionará si configuraste el modelo Usuario en config/auth.php
+    $rutaComprobante = null;
+
+    if ($request->hasFile('comprobante')) {
+        $file = $request->file('comprobante');
+        $nombreArchivo = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('comprobantes'), $nombreArchivo);   // SE GUARDA EN public/comprobantes
+        $rutaComprobante = 'comprobantes/' . $nombreArchivo;        // ruta pública para la BD
+    }
 
     foreach ($butaca_ids as $butaca_id) {
-        Log::info('LLAMANDO registrarRecomendacion para usuario: ' . $usuario_id);
-
         $registro = FuncionButaca::where('funcion_id', $funcion_id)
-                    ->where('butaca_id', $butaca_id)
-                    ->first();
+            ->where('butaca_id', $butaca_id)
+            ->first();
 
         if ($registro) {
-            $registro->estado = 1; // Reservado (pendiente de validación)
-            $registro->comprobante = $comprobantePath;
+            $registro->estado = 1; // reservado pendiente
+            $registro->comprobante = $rutaComprobante;
             $registro->usuario_id = $usuario_id;
             $registro->save();
-        }
-        else{
+        } else {
             FuncionButaca::create([
-                'funcion_id' => $request->funcion_id,
+                'funcion_id' => $funcion_id,
                 'butaca_id' => $butaca_id,
                 'usuario_id' => $usuario_id,
-                'estado' => 1, // reservado
-                'comprobante' => $comprobantePath,
+                'estado' => 1,
+                'comprobante' => $rutaComprobante,
             ]);
         }
-         
-    $funcion = Funcion::find($funcion_id);
-    $horaInicio = $funcion->hora_inicio;
 
-    // llamamos el recomendador
-    $recomendador = new \App\Http\Controllers\RecomendacionController();
-    $recomendador->registrarRecomendacion(
-        $usuario_id,
-        $funcion->pelicula_id,
-        $horaInicio
-    );
+        // llamamos recomendador
+        $funcion = Funcion::find($funcion_id);
+        $horaInicio = $funcion->hora_inicio;
+
+        $recomendador = new \App\Http\Controllers\RecomendacionController();
+        $recomendador->registrarRecomendacion(
+            $usuario_id,
+            $funcion->pelicula_id,
+            $horaInicio
+        );
     }
-     
 
     return redirect()->route('cartelera')->with('success', '✅ Reserva confirmada correctamente.');
 }
+
 
 
 public function reservar(Request $request)
@@ -413,12 +414,13 @@ public function ingresosHoy(Request $request)
 //        ]);
 //    }
 
+
 public function butacasConfirmadas()
 {
     return $this->hasMany(\App\Models\FuncionButaca::class, 'funcion_id')
                 ->where('estado', 2);
 }
-
+//generar
 public function verBoleto($uuid)
 {
     $boleto = FuncionButaca::with(['funcion.pelicula', 'funcion.sala', 'butaca'])
@@ -439,6 +441,10 @@ public function verBoleto($uuid)
 
 public function imprimirBoleto($uuid)
 {
+    if (auth()->user()->rol != 1) {
+        abort(403, 'No autorizado');
+    }
+
     $boleto = FuncionButaca::with(['funcion.pelicula', 'funcion.sala', 'butaca'])->findOrFail($uuid);
 
     $urlValidacion = route('admin.validar.boleto', $uuid);

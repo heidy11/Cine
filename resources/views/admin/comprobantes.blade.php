@@ -30,8 +30,10 @@
                                 <td class="border px-4 py-2">{{ $c->butaca }}</td>
                                 <td class="border px-4 py-2">{{ $c->usuario }}</td>
                                 <td class="border px-4 py-2">
-                                    <a href="{{ asset('storage/' . $c->comprobante) }}" target="_blank" class="text-blue-600 underline">Ver</a>
+                                    <a href="{{ asset($c->comprobante) }}"" target="_blank" class="text-blue-600 underline">Ver</a>
                                 </td>
+                               
+
                                 <td class="border px-4 py-2 text-center">
                                     @if($c->estado == 1)
                                         <form action="{{ route('admin.comprobantes.aceptar', $c->id_funcion_butaca) }}" method="POST" class="inline">

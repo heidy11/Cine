@@ -15,13 +15,13 @@
             <p class="mt-2 text-sm text-gray-600">📲 Escanea este código para validar tu entrada</p>
             <br>
         </div>
-        <a href="{{ route('boletos.imprimir', $boleto->id_funcion_butaca) }}"
-   class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition inline-block mt-4"
-   target="_blank">
-   🖨️ Imprimir Boleto
-</a>
-
-
+       @if(Auth::user()->id_rol == 1)
+            <a href="{{ route('boletos.imprimir', $boleto->id_funcion_butaca) }}"
+               class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition inline-block mt-4"
+               target="_blank">
+               🖨️ Imprimir Boleto
+            </a>
+        @endif
 
     </div>
 </x-app-layout>

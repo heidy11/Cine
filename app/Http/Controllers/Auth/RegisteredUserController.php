@@ -34,7 +34,7 @@ class RegisteredUserController extends Controller
             'correo.regex' => 'Solo se permiten correos @gmail.com',
         ]);
         
-
+#insercion a la bd
         $usuario = Usuario::create([
             'nombre' => $request->nombre,
             'correo' => $request->correo,
